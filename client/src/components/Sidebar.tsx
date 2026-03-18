@@ -30,10 +30,12 @@ export default function Sidebar() {
         {/* Top */}
         <div>
           <Link href="/" aria-label="VedaAI Home" className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-xl transition-transform hover:scale-105">
-              V
-            </div>
-            <h1 className="text-xl font-semibold">VedaAI</h1>
+            <img
+              src="/myvedaai_logo.jpeg"
+              alt="VedaAI"
+              className="w-10 h-10 rounded-lg object-cover"
+            />
+            <h1 className="text-2xl font-semibold">VedaAI</h1>
           </Link>
           <Link href="/assignments/create" className="w-full mb-6 block">
             <button className="w-full py-3 rounded-full bg-black text-white border-2 border-orange-400 shadow-md hover:scale-105 transition">
