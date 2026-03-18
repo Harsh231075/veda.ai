@@ -1,6 +1,7 @@
 "use client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useState } from "react";
+import { useCreateAssignment } from "@/hooks/useAssignment";
 import {
   ArrowLeft,
   UploadCloud,
@@ -21,6 +22,15 @@ export default function CreateAssignmentPage() {
     { type: "Multiple Choice Questions", count: 4, marks: 1 },
     { type: "Short Questions", count: 3, marks: 2 },
   ]);
+  const [dueDate, setDueDate] = useState("");
+  const [instructions, setInstructions] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | undefined>();
+  
+  const { submitAssignment, loading, error } = useCreateAssignment();
+
+  const handleNext = () => {
+    submitAssignment(dueDate, instructions, questions, selectedFile);
+  };
 
   // update count/marks
   const updateValue = (index: number, key: "count" | "marks", value: number) => {
@@ -70,17 +80,31 @@ export default function CreateAssignmentPage() {
           </p>
 
           {/* UPLOAD */}
-          <div className="border-2 border-dashed rounded-xl p-6 text-center mb-4">
+          <input
+            type="file"
+            id="file-upload"
+            accept=".pdf,.txt"
+            className="hidden"
+            onChange={(e) => setSelectedFile(e.target.files?.[0])}
+          />
+          <div 
+            onClick={() => document.getElementById("file-upload")?.click()}
+            className="border-2 border-dashed rounded-xl p-6 text-center mb-4 cursor-pointer hover:border-black transition-colors"
+          >
             <UploadCloud className="mx-auto mb-2" />
-            <p className="text-sm">Choose a file or drag & drop it here</p>
-            <button className="mt-3 px-4 py-2 bg-gray-100 rounded-full text-sm">
-              Browse Files
-            </button>
+            <p className="text-sm">
+              {selectedFile ? selectedFile.name : "Choose a file or drag & drop it here"}
+            </p>
+            <span className="mt-3 inline-block px-4 py-2 bg-gray-100 rounded-full text-sm">
+               {selectedFile ? "Change File" : "Browse Files"}
+            </span>
           </div>
 
           {/* DATE */}
           <input
             type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
             className="w-full border rounded-xl px-4 py-2 mb-4"
           />
 
@@ -161,8 +185,11 @@ export default function CreateAssignmentPage() {
           {/* ADDITIONAL */}
           <textarea
             placeholder="Additional instructions..."
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
             className="w-full border rounded-xl px-4 py-3 mt-4"
           ></textarea>
+          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
         </div>
 
         {/* FOOTER BUTTONS */}
@@ -170,8 +197,12 @@ export default function CreateAssignmentPage() {
           <button className="px-5 py-2 bg-gray-200 rounded-full">
             Previous
           </button>
-          <button className="px-5 py-2 bg-black text-white rounded-full">
-            Next →
+          <button 
+            disabled={loading}
+            onClick={handleNext} 
+            className="px-5 py-2 bg-black text-white rounded-full disabled:opacity-50"
+          >
+            {loading ? "Creating..." : "Next →"}
           </button>
         </div>
       </div>
