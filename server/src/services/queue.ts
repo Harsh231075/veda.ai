@@ -1,6 +1,7 @@
 import { Queue, Worker, Job } from "bullmq";
 import { Assignment } from "../models/Assignment";
-import { generateAssessment, isAIProviderError } from "./aiService";
+import { isAIProviderError } from "./aiService";
+import { generateAssessment } from "./aiProvider";
 import { getIo } from "../socket";
 
 const connection = {
@@ -61,7 +62,7 @@ export const initWorker = () => {
             // If quota is effectively 0 / misconfigured, retries are pointless.
             const isFatalNoRetry =
                 isAIError &&
-                (error.code === "AI_PROVIDER_QUOTA_ZERO" || error.code === "AI_PROVIDER_MISCONFIGURED");
+                (error.code === "AI_PROVIDER_QUOTA_ZERO" || error.code === "AI_PROVIDER_MISCONFIGURED" || error.code === "AI_PROVIDER_BAD_OUTPUT");
             if (isFatalNoRetry && typeof (job as any).discard === "function") {
                 (job as any).discard();
             }

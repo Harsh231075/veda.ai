@@ -1,5 +1,6 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { z } from "zod";
+import Bottleneck from "bottleneck";
+import { AssessmentSchema, buildAssessmentPrompt, QuestionConfig } from "./assessment";
 
 type GeminiErrorLike = {
   status?: number;
@@ -12,6 +13,7 @@ export class AIProviderError extends Error {
     | "AI_PROVIDER_MISCONFIGURED"
     | "AI_PROVIDER_QUOTA_ZERO"
     | "AI_PROVIDER_RATE_LIMIT"
+    | "AI_PROVIDER_BAD_OUTPUT"
     | "AI_PROVIDER_ERROR";
   public readonly retryAfterMs?: number;
 
@@ -58,8 +60,6 @@ const isQuotaZeroError = (error: GeminiErrorLike): boolean => {
 };
 
 const getGeminiModelName = (): string => {
-  // Prefer an env override so prod can change model without code changes.
-  // Default to a commonly-available "flash" model rather than hard-coding 2.0.
   return process.env.GEMINI_MODEL || "gemini-1.5-flash";
 };
 
@@ -70,24 +70,20 @@ const getGeminiMaxOutputTokens = (): number => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 2048;
 };
 
-const AssessmentSchema = z.object({
-  sections: z.array(z.object({
-    title: z.string().describe("E.g., Section A: Multiple Choice Questions"),
-    instructions: z.string().describe("E.g., Attempt all questions. Each carries 1 mark."),
-    questions: z.array(z.object({
-      questionText: z.string(),
-      difficulty: z.enum(["Easy", "Moderate", "Hard"]),
-      marks: z.number(),
-      options: z.array(z.string()).optional().describe("Only provide if it is an MCQ"),
-      expectedAnswer: z.string().optional()
-    }))
-  }))
+// Per-process limiter (prevents RPM spikes if BullMQ concurrency > 1)
+const GEMINI_RPM = Math.max(1, Number(process.env.GEMINI_RPM || "20"));
+const GEMINI_MAX_CONCURRENCY = Math.max(1, Number(process.env.GEMINI_MAX_CONCURRENCY || "1"));
+const geminiLimiter = new Bottleneck({
+  reservoir: GEMINI_RPM,
+  reservoirRefreshAmount: GEMINI_RPM,
+  reservoirRefreshInterval: 60 * 1000,
+  maxConcurrent: GEMINI_MAX_CONCURRENCY,
 });
 
 export const generateAssessment = async (
   instructions: string,
   sourceMaterial: string,
-  questionConfig: { type: string, count: number, marks: number }[]
+  questionConfig: QuestionConfig
 ) => {
   if (!process.env.GEMINI_API_KEY) {
     throw new AIProviderError(
@@ -104,28 +100,16 @@ export const generateAssessment = async (
 
   const structuredLlm = model.withStructuredOutput(AssessmentSchema);
 
-  const promptText = `
-You are an expert AI Assessment Creator for VedaAI.
-Generate a structured question paper based on the following configurations.
-
----
-Source Material / Context:
-${sourceMaterial || "Use general knowledge appropriate for the requested topics/instructions"}
-
----
-Instructions from user:
-${instructions || "No specific instructions"}
-
----
-Required Questions Configuration:
-${JSON.stringify(questionConfig, null, 2)}
-
-Ensure you STRICTLY follow the question configuration (counts, marks, types).
-Do NOT include options if the question type is NOT multiple choice.
-`;
+  const promptText = buildAssessmentPrompt(instructions, sourceMaterial, questionConfig);
 
   try {
-    const response = await structuredLlm.invoke(promptText);
+    console.log("[Gemini] Prompt:\n", promptText);
+    const response = await geminiLimiter.schedule(() => structuredLlm.invoke(promptText));
+    try {
+      console.log("[Gemini] Raw response:\n", JSON.stringify(response, null, 2));
+    } catch (e) {
+      console.log("[Gemini] Raw response (non-serializable):", response);
+    }
     return response;
   } catch (err: any) {
     const error = ((err?.cause as GeminiErrorLike) ?? (err as GeminiErrorLike));
