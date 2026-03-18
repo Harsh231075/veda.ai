@@ -26,17 +26,15 @@ export default function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <div className="hidden md:flex w-[300px] h-screen bg-[#f4f4f4] p-4 flex-col justify-between rounded-2xl">
-
+      <div className="hidden md:flex w-70 h-screen bg-white p-4 flex-col justify-between rounded-2xl text-black">
         {/* Top */}
         <div>
           <Link href="/" aria-label="VedaAI Home" className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-xl transition-transform hover:scale-105">
+            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-xl transition-transform hover:scale-105">
               V
             </div>
             <h1 className="text-xl font-semibold">VedaAI</h1>
           </Link>
-
           <Link href="/assignments/create" className="w-full mb-6 block">
             <button className="w-full py-3 rounded-full bg-black text-white border-2 border-orange-400 shadow-md hover:scale-105 transition">
               ✨ Create Assignment
@@ -54,9 +52,9 @@ export default function Sidebar() {
                 <Link
                   key={i}
                   href={item.href}
-                  className={`flex items-center gap-3 p-3 rounded-lg ${isActive
+                  className={`flex items-center gap-3 p-3 rounded-lg text-black ${isActive
                     ? "bg-gray-200 text-black font-medium"
-                    : "text-gray-500 hover:bg-gray-100"
+                    : "text-black hover:bg-gray-300"
                     }`}
                 >
                   <Icon size={20} />
@@ -71,7 +69,7 @@ export default function Sidebar() {
         <div>
           <Link
             href="/settings"
-            className="flex items-center gap-3 p-3 text-gray-500 hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-3 p-3 text-black hover:bg-gray-100 rounded-lg"
           >
             <Settings size={20} />
             <span>Settings</span>
@@ -84,7 +82,7 @@ export default function Sidebar() {
             />
             <div>
               <p className="font-semibold text-sm">Delhi Public School</p>
-              <p className="text-xs text-gray-500">Bokaro Steel City</p>
+              <p className="text-xs text-gray-900">Bokaro Steel City</p>
             </div>
           </div>
         </div>
@@ -102,11 +100,11 @@ export default function Sidebar() {
             <Link
               key={i}
               href={item.href}
-              className={`flex flex-col items-center text-xs ${isActive ? "text-white" : "text-gray-400"
-                }`}
+              className="flex flex-col items-center text-xs"
+              style={{ color: "#ffffff" }}
             >
-              <Icon size={20} />
-              <span>{item.name}</span>
+              <Icon size={20} color="#ffffff" />
+              <span style={{ color: "#ffffff" }}>{item.name}</span>
             </Link>
           );
         })}

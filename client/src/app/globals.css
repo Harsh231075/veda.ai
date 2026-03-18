@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --heading-color: #000000;
+  --muted-color: #6b7280;
 }
 
 @theme inline {
@@ -12,15 +14,46 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Ensure headings and main text have high contrast on light theme */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color);
+}
+
+/* Make common inline text slightly darker for readability */
+p,
+span,
+a,
+li,
+div,
+label {
+  color: var(--foreground);
+}
+
+/* Muted/secondary text (use where classes rely on muted color) */
+.muted,
+.text-muted {
+  color: var(--muted-color);
+}
+
+/* Sidebar-specific color fixes: keep text dark and allow components to inherit */
+.sidebar {
+  color: #000;
+}
+
+.sidebar p,
+.sidebar a,
+.sidebar span,
+.sidebar li {
+  color: inherit;
 }
