@@ -1,11 +1,15 @@
 import DashboardLayout from "@/components/DashboardLayout";
+import Empty from "@/components/Empty";
 
 export default function GroupsPage() {
   return (
     <DashboardLayout>
       <div className="p-4">
         <h1 className="text-2xl font-bold">My Groups</h1>
-        <p className="text-sm text-gray-500 mt-2">Placeholder page for groups.</p>
+        <Empty 
+          title="No Groups Found" 
+          description="You haven't joined or created any classrooms or groups. Create or join one to begin."
+        />
       </div>
     </DashboardLayout>
   );

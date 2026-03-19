@@ -1,8 +1,8 @@
 "use client";
 
-// components/AssignmentGrid.tsx
 import AssignmentCard from "./AssignmentCard";
 import { useGetAssignments } from "@/hooks/useAssignment";
+import Empty from "./Empty";
 
 export default function AssignmentGrid() {
   const { assignments, loading, error, refetch } = useGetAssignments();
@@ -16,7 +16,12 @@ export default function AssignmentGrid() {
   }
 
   if (assignments.length === 0) {
-    return <p className="text-gray-500 mt-6 font-medium">No assignments found.</p>;
+    return (
+      <Empty 
+        title="No assignments yet" 
+        description="Create your first assignment to start collecting and grading student submissions with AI assist." 
+      />
+    );
   }
 
   return (
