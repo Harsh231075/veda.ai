@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import MobileHeader from "./MobileHeader";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children, hideHeader = false }: { children: React.ReactNode; hideHeader?: boolean }) {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
@@ -49,12 +49,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex bg-gray-50 min-h-screen overflow-hidden">
       <Sidebar />
       <main className="flex-1 bg-gray-100 overflow-y-auto md:ml-72">
-        <div className="sticky top-0 z-40 bg-gray-100 px-4 md:px-6 pt-3 md:pt-6">
-          <MobileHeader />
-          <div className="hidden md:block">
-            <Header />
+        {!hideHeader && (
+          <div className="sticky top-0 z-40 bg-gray-100 px-4 md:px-6 pt-3 md:pt-6">
+            <MobileHeader />
+            <div className="hidden md:block">
+              <Header />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="px-4 md:px-6 pb-28">
           {children}

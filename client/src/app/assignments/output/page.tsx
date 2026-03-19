@@ -3,6 +3,8 @@ import React, { Suspense } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useSearchParams } from "next/navigation";
 import { useAssignmentOutput } from "@/hooks/useAssignmentOutput";
+import { RefreshCw, Download, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 function OutputContent() {
     const searchParams = useSearchParams();
@@ -14,7 +16,6 @@ function OutputContent() {
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
                 <p className="font-medium">AI is generating your question paper...</p>
-                <p className="text-sm text-gray-500 mt-2">This may take a few seconds as Gemini handles your instruction sets.</p>
             </div>
         );
     }
@@ -23,12 +24,11 @@ function OutputContent() {
         return (
             <div className="text-center text-red-500 mt-20 flex flex-col items-center justify-center">
                 <p className="font-semibold text-lg">Failed to generate assignment.</p>
-                <p className="text-sm text-gray-500 mt-1 mb-4">Gemini API encountered an exception processing this job.</p>
                 <button
                     onClick={() => window.location.href = "/assignments/create"}
-                    className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium"
+                    className="bg-black text-white px-4 py-2 mt-4 text-sm"
                 >
-                    Try Recreating
+                    Try Again
                 </button>
             </div>
         );
@@ -39,93 +39,102 @@ function OutputContent() {
     return (
         <div className="relative">
 
-            {/* TOAST POPUP */}
+            {/* TOAST */}
             {toast && (
-                <div className={`fixed top-24 md:top-5 right-5 p-4 rounded-xl shadow-lg border text-white animate-bounce flex items-center gap-2 z-50 ${toast.type === 'success' ? 'bg-green-600 border-green-700' : 'bg-red-600 border-red-700'
-                    }`}>
-                    <span className="font-medium text-sm">{toast.message}</span>
-                    <button onClick={() => setToast(null)} className="ml-2 font-bold text-lg leading-none">×</button>
+                <div className="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 text-sm no-print">
+                    {toast.message}
+                    <button onClick={() => setToast(null)} className="ml-2">×</button>
                 </div>
             )}
 
-            <div className="max-w-4xl mx-auto">
-                {/* HEADERS */}
-                <div className="flex justify-end items-center mb-6">
+            {/* TOP ACTIONS */}
+            <div className="max-w-4xl mx-auto mt-8 mb-6 flex justify-between items-center no-print">
+                <Link href="/assignments" className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-gray-600 hover:text-black transition active:scale-95 bg-white border border-gray-300 hover:border-gray-400 rounded-full py-2 px-3 sm:px-4 shadow-sm">
+                    <ArrowLeft size={16} /> Back
+                </Link>
+
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => window.location.href = "/assignments/create"}
+                        className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-95 transition flex items-center gap-1"
+                    >
+                        <RefreshCw size={15} /> <span className="hidden sm:inline">Regenerate</span>
+                    </button>
+
+                    <button
+                        onClick={() => window.print()}
+                        className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-95 transition flex items-center gap-1"
+                    >
+                        <Download size={15} /> <span className="hidden sm:inline">Download</span>
+                    </button>
+
                     <button
                         onClick={publish}
                         disabled={publishing || assignment.isPublished}
-                        className="bg-black text-white px-6 py-2 rounded-full font-medium shadow-md transition active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                        className={`px-4 sm:px-5 py-2 text-xs sm:text-sm font-medium rounded-full border transition active:scale-95 flex items-center ${assignment.isPublished
+                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                                : "bg-black text-white border-black hover:bg-gray-800"
+                            }`}
                     >
-                        {assignment.isPublished ? "Already Published" : publishing ? "Publishing..." : "Save & Publish Paper"}
+                        {assignment.isPublished ? "✓ Published" : publishing ? "Publishing..." : "Save & Publish"}
                     </button>
                 </div>
+            </div>
 
-                {/* PAPER BODY CONTAINER */}
-                <div className="bg-white p-6 md:p-12 rounded-2xl shadow-md border">
+            {/* PAPER */}
+            <div className="py-6 flex justify-center no-print:bg-transparent">
+                <div className="w-[794px] min-h-[1123px] bg-white px-12 py-10 text-black border border-gray-200 shadow-sm rounded-lg">
 
-                    {/* PAPER DETAILS SECTION */}
-                    <div className="border-b-2 border-dashed border-gray-300 pb-8 mb-8 text-center">
-                        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-8 uppercase text-gray-800">
-                            VedaAI Internal Assessment
+                    {/* HEADER */}
+                    <div className="text-center mb-8">
+                        <h2 className="text-xl font-bold uppercase">
+                            Delhi Public School
                         </h2>
+                    </div>
 
-                        <div className="flex flex-col md:flex-row justify-between gap-6 px-4 md:px-0 text-left">
-                            <div className="flex-1 border-b border-gray-300 pb-2">
-                                <span className="text-gray-500 font-semibold mr-2">Name:</span>
-                                <span className="inline-block w-full h-4"></span>
-                            </div>
-                            <div className="flex-1 border-b border-gray-300 pb-2">
-                                <span className="text-gray-500 font-semibold mr-2">Roll No:</span>
-                            </div>
-                            <div className="flex-1 border-b border-gray-300 pb-2">
-                                <span className="text-gray-500 font-semibold mr-2">Section:</span>
-                            </div>
-                        </div>
+                    <div className="flex justify-between text-sm mb-6">
+                        <span>Time Allowed: 45 minutes</span>
+                        <span>Maximum Marks: 20</span>
+                    </div>
+
+                    <p className="text-sm mb-6">
+                        All questions are compulsory unless stated otherwise.
+                    </p>
+
+                    <div className="flex flex-col gap-4 text-sm mb-8">
+                        <div>Name: ______________________________</div>
+                        <div>Roll No: ____________________________</div>
+                        <div>Section: ____________________________</div>
                     </div>
 
                     {/* SECTIONS */}
                     {sections.map((section: any, sIdx: number) => (
-                        <div key={sIdx} className="mb-12">
-                            <div className="mb-6">
-                                <h3 className="font-extrabold text-xl mb-1 text-gray-900 border-b border-gray-100 pb-2">{section.title}</h3>
-                                {section.instructions && (
-                                    <p className="text-sm font-medium text-gray-600 mt-2 bg-gray-50 p-3 rounded-lg border">
-                                        Note: {section.instructions}
-                                    </p>
-                                )}
-                            </div>
+                        <div key={sIdx} className="mb-10">
 
-                            <div className="space-y-8">
+                            <h3 className="text-center font-semibold text-lg mb-4">
+                                {section.title}
+                            </h3>
+
+                            {section.instructions && (
+                                <p className="text-sm italic mb-4">
+                                    {section.instructions}
+                                </p>
+                            )}
+
+                            <div className="space-y-4 text-sm leading-relaxed">
                                 {section.questions.map((q: any, qIdx: number) => (
-                                    <div key={qIdx} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition">
-                                        <span className="font-bold text-gray-800 text-lg shrink-0 w-6">
-                                            {qIdx + 1}.
-                                        </span>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-start gap-4">
-                                                <p className="font-medium text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">{q.questionText}</p>
+                                    <div key={qIdx} className="flex gap-2">
+                                        <span>{qIdx + 1}.</span>
 
-                                                {/* BADGES */}
-                                                <div className="flex gap-2 flex-col items-end shrink-0">
-                                                    <span className="text-[11px] px-2.5 py-1 bg-orange-500 text-white rounded-md font-bold uppercase tracking-wide">
-                                                        {q.marks} Marks
-                                                    </span>
-                                                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider ${q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                                                        q.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                                                            'bg-red-100 text-red-700'
-                                                        }`}>
-                                                        {q.difficulty}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <p>{q.questionText}</p>
 
-                                            {/* MCQ OPTIONS */}
+                                            {/* OPTIONS */}
                                             {q.options && q.options.length > 0 && (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                                                    {q.options.map((opt: string, oIdx: number) => (
-                                                        <div key={oIdx} className="flex gap-3 items-center group">
-                                                            <div className="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-black transition-colors flex shrink-0 items-center justify-center"></div>
-                                                            <span className="text-gray-700 font-medium group-hover:text-black transition-colors">{opt}</span>
+                                                <div className="mt-2 space-y-1 ml-4">
+                                                    {q.options.map((opt: string, i: number) => (
+                                                        <div key={i}>
+                                                            ({String.fromCharCode(97 + i)}) {opt}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -138,7 +147,9 @@ function OutputContent() {
                     ))}
 
                     {sections.length === 0 && (
-                        <p className="text-center text-gray-500 italic py-10">No sections were generated.</p>
+                        <p className="text-center text-gray-500 italic">
+                            No sections generated
+                        </p>
                     )}
                 </div>
             </div>
@@ -148,11 +159,10 @@ function OutputContent() {
 
 export default function OutputPage() {
     return (
-        <DashboardLayout>
+        <DashboardLayout hideHeader={true}>
             <Suspense fallback={
-                <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                    <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-                    <p>Loading Assignment Viewer...</p>
+                <div className="flex justify-center items-center min-h-[60vh]">
+                    Loading...
                 </div>
             }>
                 <OutputContent />

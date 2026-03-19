@@ -57,3 +57,13 @@ label {
 .sidebar li {
   color: inherit;
 }
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
