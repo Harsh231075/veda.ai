@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAssignmentApi } from "@/services/assignment.service";
@@ -11,7 +13,7 @@ export const useCreateAssignment = () => {
         try {
             setLoading(true);
             setError(null);
-            
+
             // 1. Fetch Auth from LocalStorage
             const storedUser = localStorage.getItem("user");
             if (!storedUser) throw new Error("Please mock login first on /login");
@@ -25,12 +27,12 @@ export const useCreateAssignment = () => {
             payload.append("questionsConfig", JSON.stringify(questions));
             payload.append("createdBy", teacherId);
             if (file) {
-                 payload.append("file", file);
+                payload.append("file", file);
             }
 
             // 3. Create the assignment
             const data = await createAssignmentApi(payload);
-            
+
             // 4. Redirect to the loading/output view using ID
             if (data?.assignmentId) {
                 router.push(`/assignments/output?id=${data.assignmentId}`);
@@ -58,7 +60,7 @@ export const useGetAssignments = () => {
         try {
             setLoading(true);
             setError(null);
-            
+
             const storedUser = localStorage.getItem("user");
             if (!storedUser) throw new Error("Please mock login first on /login");
             const user = JSON.parse(storedUser);

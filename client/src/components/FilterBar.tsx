@@ -3,14 +3,34 @@
 
 import { Search, Filter } from "lucide-react";
 
-export default function FilterBar() {
+export default function FilterBar({
+  search = "",
+  onSearchChange,
+  status = "ALL",
+  onStatusChange,
+}: {
+  search?: string;
+  onSearchChange?: (v: string) => void;
+  status?: string;
+  onStatusChange?: (v: string) => void;
+}) {
   return (
-    <div className="flex flex-col md:flex-row gap-3 mt-4">
+    <div className="flex flex-col md:flex-row gap-3 mt-4 items-center">
 
-      {/* Filter */}
-      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm">
+      {/* Filter / Status */}
+      <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl shadow-sm">
         <Filter size={18} />
-        <span className="text-sm text-gray-500">Filter</span>
+        <select
+          value={status}
+          onChange={(e) => onStatusChange?.(e.target.value)}
+          className="text-sm outline-none bg-transparent"
+        >
+          <option value="ALL">All</option>
+          <option value="PENDING">Pending</option>
+          <option value="PROCESSING">Processing</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="FAILED">Failed</option>
+        </select>
       </div>
 
       {/* Search */}
@@ -19,6 +39,8 @@ export default function FilterBar() {
         <input
           placeholder="Search Assignment"
           className="w-full outline-none text-sm"
+          value={search}
+          onChange={(e) => onSearchChange?.(e.target.value)}
         />
       </div>
     </div>
