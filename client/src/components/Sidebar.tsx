@@ -122,11 +122,13 @@ export default function Sidebar() {
       </div>
 
       {/* ================= FLOATING BUTTON ================= */}
-      <Link href="/assignments/create">
-        <button className="md:hidden fixed bottom-28 right-6 bg-white text-red-600 p-4 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 transition active:scale-95 z-40">
-          <Plus size={22} className="stroke-[2.5]" />
-        </button>
-      </Link>
+      {pathname !== "/assignments/create" && (
+        <Link href="/assignments/create">
+          <button className="md:hidden fixed bottom-28 right-6 bg-white text-red-600 p-4 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 transition active:scale-95 z-40">
+            <Plus size={22} className="stroke-[2.5]" />
+          </button>
+        </Link>
+      )}
     </>
   );
 }
