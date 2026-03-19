@@ -1,66 +1,32 @@
 import { generateAssessment as generateWithGemini, AIProviderError } from "./aiService";
-import { buildAssessmentPrompt, normalizeAssessment, QuestionConfig } from "./assessment";
+import { buildAssessmentPrompt, QuestionConfig } from "./assessment";
+import { parseAndValidateAssessment, getProvider } from "./utils/aiProviderUtils";
 
-const safeJsonParse = (text: string): unknown => {
-  const trimmed = text.trim();
-  // Handle common "```json ...```" wrappers defensively
-  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  const toParse = fenced ? fenced[1] : trimmed;
-  return JSON.parse(toParse);
+
+// === Provider handlers ===
+const handleGemini = async (
+  instructions: string,
+  sourceMaterial: string,
+  questionConfig: QuestionConfig
+) => {
+  return generateWithGemini(instructions, sourceMaterial, questionConfig);
 };
 
-const parseAndValidateAssessment = (rawContent: string, providerName: string) => {
-  let parsed: unknown;
-  try {
-    parsed = safeJsonParse(rawContent);
-  } catch (e: any) {
-    throw new AIProviderError(
-      "AI_PROVIDER_BAD_OUTPUT",
-      `${providerName} returned non-JSON output. Enforce JSON-only output or reduce prompt size.`
-    );
-  }
-
-  try {
-    return normalizeAssessment(parsed);
-  } catch {
-    const preview = rawContent.trim().slice(0, 800);
-    throw new AIProviderError(
-      "AI_PROVIDER_BAD_OUTPUT",
-      `${providerName} returned JSON but it did not match the expected schema. Preview: ${preview}`
-    );
-  }
-};
-
-const getProvider = (): string => {
-  return (process.env.AI_PROVIDER || process.env.GEMINI_PROVIDER || "gemini").toLowerCase();
-};
-
-const openAICall = async (promptText: string) => {
+const handleOpenAI = async (promptText: string) => {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", "OPENAI_API_KEY not set in environment");
-  }
+  if (!apiKey) throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", "OPENAI_API_KEY not set");
 
   const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
   const maxTokens = Number(process.env.OPENAI_MAX_TOKENS || "2048");
 
-  console.log("[OpenAI] Prompt:\n", promptText);
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: "user", content: promptText }],
-      max_tokens: maxTokens,
-    }),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({ model, messages: [{ role: "user", content: promptText }], max_tokens: maxTokens }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    // Map common errors
     if (res.status === 429) {
       const retryAfter = res.headers.get("retry-after");
       const retryMs = retryAfter ? Number(retryAfter) * 1000 : undefined;
@@ -74,45 +40,23 @@ const openAICall = async (promptText: string) => {
 
   const json = await res.json();
   const content: string | undefined = json?.choices?.[0]?.message?.content;
-  console.log("[OpenAI] Raw response JSON:\n", JSON.stringify(json, null, 2));
-  if (!content) {
-    throw new AIProviderError("AI_PROVIDER_ERROR", "OpenAI response missing choices[0].message.content");
-  }
-  console.log("[OpenAI] Extracted content:\n", content);
+  if (!content) throw new AIProviderError("AI_PROVIDER_ERROR", "OpenAI response missing content");
+
   return parseAndValidateAssessment(content, "OpenAI");
 };
 
-const groqCall = async (promptText: string) => {
+const handleGroq = async (promptText: string) => {
   const apiKey = process.env.GROQ_API_KEY;
-  const apiUrl =
-    process.env.GROQ_API_URL ||
-    process.env.GROQ_BASE_URL ||
-    "https://api.groq.com/openai/v1/chat/completions";
-  if (!apiKey) {
-    throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", "GROQ_API_KEY not set in environment");
-  }
+  const apiUrl = process.env.GROQ_API_URL || process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1/chat/completions";
+  if (!apiKey) throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", "GROQ_API_KEY not set");
 
   const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
   const maxTokens = Number(process.env.GROQ_MAX_TOKENS || "2048");
 
-  console.log("[Groq] Prompt:\n", promptText);
   const res = await fetch(apiUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content: "Return ONLY valid JSON for the assessment. No markdown.",
-        },
-        { role: "user", content: promptText },
-      ],
-      max_tokens: maxTokens,
-    }),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({ model, messages: [{ role: "system", content: "Return ONLY valid JSON for the assessment. No markdown." }, { role: "user", content: promptText }], max_tokens: maxTokens }),
   });
 
   if (!res.ok) {
@@ -135,45 +79,39 @@ const groqCall = async (promptText: string) => {
     const cause = e?.cause ?? e;
     const isDns = cause && (cause.code === "ENOTFOUND" || String(cause.message).includes("ENOTFOUND"));
     if (isDns) {
-      throw new AIProviderError(
-        "AI_PROVIDER_MISCONFIGURED",
-        `Could not resolve GROQ host for URL ${apiUrl}. Check GROQ_API_URL in your .env and your network/DNS settings.`
-      );
+      throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", `Could not resolve GROQ host for URL ${apiUrl}.`);
     }
     throw new AIProviderError("AI_PROVIDER_ERROR", `Groq fetch failed: ${e?.message || e}`);
   }
 
-  console.log("[Groq] Raw response JSON:\n", JSON.stringify(json, null, 2));
   const content: string | undefined = json?.choices?.[0]?.message?.content;
-  console.log("[Groq] Extracted content:\n", content);
-  if (!content) {
-    throw new AIProviderError("AI_PROVIDER_BAD_OUTPUT", "Groq response missing choices[0].message.content");
-  }
+  if (!content) throw new AIProviderError("AI_PROVIDER_BAD_OUTPUT", "Groq response missing content");
+
   return parseAndValidateAssessment(content, "Groq");
 };
 
+// === Public dispatcher ===
 export const generateAssessment = async (
   instructions: string,
   sourceMaterial: string,
   questionConfig: QuestionConfig
 ) => {
   const provider = getProvider();
-
   const promptText = buildAssessmentPrompt(instructions, sourceMaterial, questionConfig);
 
-  if (provider === "gemini" || provider === "google" || provider === "g") {
-    return generateWithGemini(instructions, sourceMaterial, questionConfig);
+  switch (provider) {
+    case "gemini":
+    case "google":
+    case "g":
+      return handleGemini(instructions, sourceMaterial, questionConfig);
+    case "openai":
+    case "oa":
+      return handleOpenAI(promptText);
+    case "groq":
+      return handleGroq(promptText);
+    default:
+      throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", `Unknown AI provider: ${provider}`);
   }
-
-  if (provider === "openai" || provider === "oa") {
-    return openAICall(promptText);
-  }
-
-  if (provider === "groq") {
-    return groqCall(promptText);
-  }
-
-  throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", `Unknown AI provider: ${provider}`);
 };
 
 export default { generateAssessment };

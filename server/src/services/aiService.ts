@@ -2,11 +2,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import Bottleneck from "bottleneck";
 import { AssessmentSchema, buildAssessmentPrompt, QuestionConfig } from "./assessment";
 
-type GeminiErrorLike = {
-  status?: number;
-  message?: string;
-  errorDetails?: Array<any>;
-};
+type GeminiErrorLike = { status?: number; message?: string; errorDetails?: Array<any> };
 
 export class AIProviderError extends Error {
   public readonly code:
@@ -17,11 +13,7 @@ export class AIProviderError extends Error {
     | "AI_PROVIDER_ERROR";
   public readonly retryAfterMs?: number;
 
-  constructor(
-    code: AIProviderError["code"],
-    message: string,
-    options?: { retryAfterMs?: number }
-  ) {
+  constructor(code: AIProviderError["code"], message: string, options?: { retryAfterMs?: number }) {
     super(message);
     this.name = "AIProviderError";
     this.code = code;
@@ -29,116 +21,69 @@ export class AIProviderError extends Error {
   }
 }
 
-export const isAIProviderError = (err: any): err is AIProviderError => {
-  return Boolean(err && err.name === "AIProviderError" && typeof err.code === "string");
-};
+export const isAIProviderError = (err: any): err is AIProviderError => Boolean(err && err.name === "AIProviderError");
 
+// --- Helpers ---
 const parseRetryAfterMs = (error: GeminiErrorLike): number | undefined => {
-  // Gemini SDK surfaces google.rpc.RetryInfo in errorDetails with retryDelay like "40s".
-  const retryInfo = error?.errorDetails?.find((d) => d?.["@type"]?.includes("RetryInfo"));
-  const retryDelay: string | undefined = retryInfo?.retryDelay;
-  if (!retryDelay) return undefined;
-
-  const trimmed = String(retryDelay).trim();
-  const secondsMatch = trimmed.match(/^([0-9]+)s$/i);
-  if (secondsMatch) return Number(secondsMatch[1]) * 1000;
-
-  const msMatch = trimmed.match(/^([0-9]+)ms$/i);
-  if (msMatch) return Number(msMatch[1]);
-
-  return undefined;
+  const retryInfo = error?.errorDetails?.find((d) => String(d?.["@type"] ?? "").includes("RetryInfo"));
+  const raw = retryInfo?.retryDelay ?? "";
+  const s = String(raw).trim();
+  const sec = s.match(/^([0-9]+)s$/i)?.[1];
+  if (sec) return Number(sec) * 1000;
+  const ms = s.match(/^([0-9]+)ms$/i)?.[1];
+  return ms ? Number(ms) : undefined;
 };
 
 const isQuotaZeroError = (error: GeminiErrorLike): boolean => {
-  const msg = String(error?.message ?? "");
-  if (msg.includes("limit: 0") && msg.toLowerCase().includes("quota")) return true;
-  if (msg.toLowerCase().includes("free_tier") && msg.toLowerCase().includes("quota")) return true;
-
-  const quotaFailure = error?.errorDetails?.find((d) => d?.["@type"]?.includes("QuotaFailure"));
+  const msg = String(error?.message ?? "").toLowerCase();
+  if (msg.includes("limit: 0") && msg.includes("quota")) return true;
+  if (msg.includes("free_tier") && msg.includes("quota")) return true;
+  const quotaFailure = error?.errorDetails?.find((d) => String(d?.["@type"] ?? "").includes("QuotaFailure"));
   const violations: Array<any> = quotaFailure?.violations ?? [];
   return violations.some((v) => String(v?.quotaId ?? "").toLowerCase().includes("freetier"));
 };
 
-const getGeminiModelName = (): string => {
-  return process.env.GEMINI_MODEL || "gemini-1.5-flash";
-};
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+const GEMINI_MAX_TOKENS = Number(process.env.GEMINI_MAX_OUTPUT_TOKENS || "2048");
 
-const getGeminiMaxOutputTokens = (): number => {
-  const raw = process.env.GEMINI_MAX_OUTPUT_TOKENS;
-  const parsed = raw ? Number(raw) : NaN;
-  // 8192 output tokens is expensive and can trip rate limits quickly.
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 2048;
-};
-
-// Per-process limiter (prevents RPM spikes if BullMQ concurrency > 1)
-const GEMINI_RPM = Math.max(1, Number(process.env.GEMINI_RPM || "20"));
-const GEMINI_MAX_CONCURRENCY = Math.max(1, Number(process.env.GEMINI_MAX_CONCURRENCY || "1"));
+const RPM = Math.max(1, Number(process.env.GEMINI_RPM || "20"));
+const MAX_CONC = Math.max(1, Number(process.env.GEMINI_MAX_CONCURRENCY || "1"));
 const geminiLimiter = new Bottleneck({
-  reservoir: GEMINI_RPM,
-  reservoirRefreshAmount: GEMINI_RPM,
+  reservoir: RPM,
+  reservoirRefreshAmount: RPM,
   reservoirRefreshInterval: 60 * 1000,
-  maxConcurrent: GEMINI_MAX_CONCURRENCY,
+  maxConcurrent: MAX_CONC,
 });
 
-export const generateAssessment = async (
-  instructions: string,
-  sourceMaterial: string,
-  questionConfig: QuestionConfig
-) => {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new AIProviderError(
-      "AI_PROVIDER_MISCONFIGURED",
-      "GEMINI_API_KEY is not set. Add it to server env (.env) as GEMINI_API_KEY=..."
-    );
-  }
+export const generateAssessment = async (instructions: string, sourceMaterial: string, questionConfig: QuestionConfig) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new AIProviderError("AI_PROVIDER_MISCONFIGURED", "GEMINI_API_KEY not set");
 
-  const model = new ChatGoogleGenerativeAI({
-    model: getGeminiModelName(),
-    maxOutputTokens: getGeminiMaxOutputTokens(),
-    apiKey: process.env.GEMINI_API_KEY
-  });
-
-  const structuredLlm = model.withStructuredOutput(AssessmentSchema);
-
+  const model = new ChatGoogleGenerativeAI({ model: GEMINI_MODEL, maxOutputTokens: GEMINI_MAX_TOKENS, apiKey });
+  const structured = model.withStructuredOutput(AssessmentSchema);
   const promptText = buildAssessmentPrompt(instructions, sourceMaterial, questionConfig);
 
   try {
-    console.log("[Gemini] Prompt:\n", promptText);
-    const response = await geminiLimiter.schedule(() => structuredLlm.invoke(promptText));
-    try {
-      console.log("[Gemini] Raw response:\n", JSON.stringify(response, null, 2));
-    } catch (e) {
-      console.log("[Gemini] Raw response (non-serializable):", response);
-    }
-    return response;
+    const resp = await geminiLimiter.schedule(() => structured.invoke(promptText));
+    return resp;
   } catch (err: any) {
-    const error = ((err?.cause as GeminiErrorLike) ?? (err as GeminiErrorLike));
-    const status = Number(error?.status);
-    const retryAfterMs = parseRetryAfterMs(error);
+    const cause = (err?.cause as GeminiErrorLike) ?? (err as GeminiErrorLike);
+    const status = Number(cause?.status);
+    const retryAfterMs = parseRetryAfterMs(cause);
 
     if (status === 429) {
-      if (isQuotaZeroError(error)) {
+      if (isQuotaZeroError(cause)) {
         throw new AIProviderError(
           "AI_PROVIDER_QUOTA_ZERO",
-          `Gemini quota is effectively 0 for model "${getGeminiModelName()}" (free-tier quota/billing not enabled). ` +
-          `Fix: enable billing/paid plan in Google AI Studio, or set GEMINI_MODEL to a model that has quota for your project.`,
+          `Gemini quota is effectively 0 for model "${GEMINI_MODEL}". Enable billing or choose another model.`,
           { retryAfterMs }
         );
       }
-
-      throw new AIProviderError(
-        "AI_PROVIDER_RATE_LIMIT",
-        `Gemini rate-limited the request (429).` +
-        (retryAfterMs ? ` Retry after ~${Math.ceil(retryAfterMs / 1000)}s.` : ""),
-        { retryAfterMs }
-      );
+      throw new AIProviderError("AI_PROVIDER_RATE_LIMIT", `Gemini rate-limited (429).`, { retryAfterMs });
     }
 
-    throw new AIProviderError(
-      "AI_PROVIDER_ERROR",
-      error?.message || "Gemini request failed",
-      { retryAfterMs }
-    );
+    throw new AIProviderError("AI_PROVIDER_ERROR", cause?.message || "Gemini request failed", { retryAfterMs });
   }
 };
+
 

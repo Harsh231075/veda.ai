@@ -33,6 +33,8 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
     try {
       setIsDeleting(true);
       await deleteAssignmentApi(assignment._id);
+      setIsDeleting(false);
+      setIsConfirmOpen(false);
       setToast({ isOpen: true, message: "Assignment deleted successfully!", type: "success" });
       setTimeout(() => {
         if (refetch) refetch();
@@ -55,7 +57,7 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
       </span>
 
       {/* Menu Trigger */}
-      <div 
+      <div
         className="absolute top-4 right-4 cursor-pointer p-1 hover:bg-gray-100 rounded-full"
         onClick={() => setShowDropdown(!showDropdown)}
       >
@@ -69,7 +71,7 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
             <Eye size={16} />
             View Assignment
           </Link>
-          <button 
+          <button
             onClick={() => { setIsConfirmOpen(true); setShowDropdown(false); }}
             className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
           >
@@ -95,7 +97,7 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
       </div>
 
       {/* Modals & Toast */}
-      <ConfirmationModal 
+      <ConfirmationModal
         isOpen={isConfirmOpen}
         title="Delete Assignment"
         message={`Are you sure you want to delete "${truncatedTitle}"? This action cannot be undone.`}
@@ -106,7 +108,7 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
         isLoading={isDeleting}
       />
 
-      <Toast 
+      <Toast
         isOpen={toast.isOpen}
         message={toast.message}
         type={toast.type}
