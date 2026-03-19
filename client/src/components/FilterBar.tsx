@@ -15,7 +15,7 @@ export default function FilterBar({
   onStatusChange?: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-col md:flex-row gap-3 mt-4 items-center">
+    <div className="flex flex-row gap-2 mt-4 items-center w-full">
 
       {/* Filter / Status */}
       <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl shadow-sm">

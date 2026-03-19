@@ -82,14 +82,14 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
       )}
 
       {/* Title */}
-      <h2 className="font-semibold text-lg mb-6 underline">
+      <h2 className="font-semibold text-lg mb-4 underline pr-28 break-words">
         {truncatedTitle}
       </h2>
 
       {/* Dates */}
-      <div className="flex justify-between text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm text-gray-500 gap-1 sm:gap-0 mt-auto">
         <span>
-          <strong>Assigned on:</strong> {formattedDate(assignment.createdAt)}
+          <strong>Assigned:</strong> {formattedDate(assignment.createdAt)}
         </span>
         <span>
           <strong>Due:</strong> {formattedDate(assignment.dueDate)}
