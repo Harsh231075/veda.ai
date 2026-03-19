@@ -1,6 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -23,9 +25,15 @@ export default function ConfirmationModal({
   cancelText = "Cancel",
   isLoading = false,
 }: ConfirmationModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
       <div className="bg-white rounded-2xl p-6 w-full max-w-sm mx-4 shadow-xl border border-gray-100 transform transition-all scale-100">
         
@@ -66,4 +74,6 @@ export default function ConfirmationModal({
       </div>
     </div>
   );
+
+  return mounted ? createPortal(modalContent, document.body) : null;
 }

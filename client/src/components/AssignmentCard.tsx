@@ -33,12 +33,9 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
     try {
       setIsDeleting(true);
       await deleteAssignmentApi(assignment._id);
-      setIsDeleting(false);
       setIsConfirmOpen(false);
-      setToast({ isOpen: true, message: "Assignment deleted successfully!", type: "success" });
-      setTimeout(() => {
-        if (refetch) refetch();
-      }, 1200);
+      
+      if (refetch) refetch();
     } catch (err: any) {
       setToast({ isOpen: true, message: "Failed: " + err.message, type: "error" });
       setIsDeleting(false);
