@@ -7,19 +7,36 @@ import FilterBar from "@/components/FilterBar";
 import AssignmentGrid from "@/components/AssignmentGrid";
 import { useGetAssignments } from "@/hooks/useAssignment";
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AssignmentsPage() {
   const { assignments, loading, error, refetch } = useGetAssignments();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("ALL");
+  const router = useRouter();
 
   return (
     <DashboardLayout>
-      <div className="mt-4">
+      
+      {/* SECONDARY HEADER for Mobile */}
+      <div className="md:hidden flex items-center justify-center relative mt-4 mb-2">
+        <button 
+          onClick={() => router.back()} 
+          className="absolute left-0 p-2 bg-white rounded-full shadow-sm border border-gray-100 active:scale-95 transition"
+        >
+          <ArrowLeft size={16} className="text-gray-700" />
+        </button>
+        <h2 className="text-base font-bold text-gray-900">Assignments</h2>
+      </div>
+
+      <div className="hidden md:block mt-4">
         <p className="text-sm text-gray-600">Manage and create assignments for your classes.</p>
       </div>
 
-      <FilterBar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
+      <div className="mt-4">
+        <FilterBar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
+      </div>
 
       <AssignmentGrid assignments={assignments} search={search} status={status} />
 

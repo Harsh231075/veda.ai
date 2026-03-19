@@ -24,43 +24,40 @@ export default function MobileHeader({ title }: { title?: string }) {
 
   return (
     <div className="md:hidden">
-      <div className="flex items-center justify-between bg-gray-200 rounded-3xl px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-between bg-white/90 backdrop-blur-lg rounded-full px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 mx-2 mt-2">
 
-        {/* Left - Back + Title */}
-        <div className="flex items-center gap-3 min-w-0">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            aria-label="Go back"
-            className="bg-gray-300 p-2 rounded-full shrink-0"
-          >
-            <ArrowLeft size={18} className="text-black" />
-          </button>
-
-          <div className="min-w-0">
-            <h1 className="text-base font-semibold text-black truncate">{pageTitle}</h1>
-            <p className="text-xs text-gray-700 truncate">{userName}</p>
-          </div>
+        {/* Left - Logo + Name */}
+        <div className="flex items-center gap-2">
+          <img
+            src="/myvedaai_logo.jpeg"
+            alt="VedaAI"
+            className="w-7 h-7 rounded-lg object-cover shadow-sm"
+          />
+          <h1 className="text-base font-bold text-gray-900 tracking-tight">VedaAI</h1>
         </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-4">
+        {/* Right - Notification + Avatar + Menu */}
+        <div className="flex items-center gap-3">
 
           {/* Notification */}
-          <div className="relative bg-gray-300 p-2 rounded-full">
-            <Bell size={20} className="text-black" />
-            <span className="absolute top-0 right-0 w-3 h-3 bg-orange-500 rounded-full"></span>
-          </div>
+          <button className="relative p-1.5 hover:bg-gray-50 rounded-full transition active:scale-95">
+            <Bell size={19} className="text-gray-700" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+          </button>
 
           {/* Profile */}
-          <img
-            src="https://i.pravatar.cc/40"
-            alt={userName}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <button className="rounded-full shadow-sm hover:opacity-90 transition active:scale-95">
+            <img
+              src="https://i.pravatar.cc/40"
+              alt={userName}
+              className="w-8 h-8 rounded-full object-cover border border-gray-200"
+            />
+          </button>
 
           {/* Menu */}
-          <Menu size={24} className="text-black" />
+          <button className="p-1 hover:bg-gray-50 rounded-full transition active:scale-95">
+            <Menu size={20} className="text-gray-700" />
+          </button>
         </div>
       </div>
     </div>

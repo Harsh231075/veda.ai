@@ -91,8 +91,8 @@ export default function Sidebar() {
       </div>
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
-      <div className="md:hidden fixed bottom-0 left-0 w-full bg-black text-white flex justify-around items-center py-3 rounded-t-3xl z-50">
-        {menuItems.slice(0, 4).map((item, i) => {
+      <div className="md:hidden fixed bottom-4 left-4 right-4 bg-black shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex justify-around items-center py-2.5 px-2 rounded-full z-40">
+        {menuItems.map((item, i) => {
           const Icon = item.icon;
           const isActive =
             pathname === item.href ||
@@ -102,11 +102,17 @@ export default function Sidebar() {
             <Link
               key={i}
               href={item.href}
-              className="flex flex-col items-center text-xs"
-              style={{ color: "#ffffff" }}
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium transition active:scale-95 ${isActive ? "text-white" : "text-gray-400"}`}
             >
-              <Icon size={20} color="#ffffff" />
-              <span style={{ color: "#ffffff" }}>{item.name}</span>
+              <div className={`p-1.5 rounded-full transition ${isActive ? "bg-white/10" : ""}`}>
+                <Icon size={18} className={isActive ? "text-white" : "text-gray-400"} />
+              </div>
+              <span 
+                className={isActive ? "font-semibold" : ""} 
+                style={{ color: isActive ? "#ffffff" : "#9ca3af" }}
+              >
+                {item.name}
+              </span>
             </Link>
           );
         })}
@@ -114,8 +120,8 @@ export default function Sidebar() {
 
       {/* ================= FLOATING BUTTON ================= */}
       <Link href="/assignments/create">
-        <button className="md:hidden fixed bottom-20 right-5 bg-white text-orange-500 p-4 rounded-full shadow-lg z-50">
-          <Plus size={24} />
+        <button className="md:hidden fixed bottom-28 right-6 bg-white text-red-600 p-4 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 transition active:scale-95 z-40">
+          <Plus size={22} className="stroke-[2.5]" />
         </button>
       </Link>
     </>
