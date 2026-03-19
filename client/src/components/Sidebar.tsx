@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <div className="hidden md:flex w-70 h-screen bg-white p-4 flex-col justify-between rounded-2xl text-black">
+      <div className="hidden md:flex md:w-72 md:fixed md:inset-y-0 md:left-0 bg-white p-4 flex-col justify-between rounded-2xl text-black">
         {/* Top */}
         <div>
           <Link href="/" aria-label="VedaAI Home" className="flex items-center gap-2 mb-6">

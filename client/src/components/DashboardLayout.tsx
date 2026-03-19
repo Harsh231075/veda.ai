@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex bg-gray-50 min-h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 bg-gray-100 overflow-y-auto">
+      <main className="flex-1 bg-gray-100 overflow-y-auto md:ml-72">
         <div className="sticky top-0 z-40 bg-gray-100 px-4 md:px-6 pt-3 md:pt-6">
           <MobileHeader />
           <div className="hidden md:block">
