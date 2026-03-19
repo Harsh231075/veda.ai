@@ -60,14 +60,14 @@ The workspace utilizes an async generation pipeline to maintain maximum responsi
 
 ```mermaid
 graph TD
-    A[👨‍🎓 User creates Assignment form] -->|Next.js Request| B[⚙️ Express Server]
-    B -->|Node Streams Push| C[🚀 BullMQ Setup Queue]
-    C -->|Worker Triggers Async| D[🤖 LangChain Pipeline]
-    D -->|Executes Multi-model API| E[🔑 Gemini / OpenAI / Groq]
+    A["👨‍🎓 User creates Assignment form"] -->|Next.js Request| B["⚙️ Express Server"]
+    B -->|Node Streams Push| C["🚀 BullMQ Setup Queue"]
+    C -->|Worker Triggers Async| D["🤖 LangChain Pipeline"]
+    D -->|Executes Multi-model API| E["🔑 Gemini / OpenAI / Groq"]
     E -->|Return AI Dataset| D
-    D -->|Push to Models DB| F[(💾 MongoDB Database)]
-    F -->|State updates via WebSocket| G[🔔 Socket.io Trigger]
-    G -->|Stream Updates Rendered| H[📱 Next.js Dynamic View Updated]
+    D -->|Push to Models DB| F["💾 MongoDB Database"]
+    F -->|State updates via WebSocket| G["🔔 Socket.io Trigger"]
+    G -->|Stream Updates Rendered| H["📱 Next.js Dynamic View Updated"]
 ```
 
 ---
