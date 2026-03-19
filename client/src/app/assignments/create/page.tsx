@@ -3,7 +3,6 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useState } from "react";
 import { useCreateAssignment } from "@/hooks/useAssignment";
 import {
-  ArrowLeft,
   UploadCloud,
   Plus,
   Minus,
@@ -25,7 +24,7 @@ export default function CreateAssignmentPage() {
   const [dueDate, setDueDate] = useState("");
   const [instructions, setInstructions] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
-  
+
   const { submitAssignment, loading, error } = useCreateAssignment();
 
   const handleNext = () => {
@@ -58,14 +57,7 @@ export default function CreateAssignmentPage() {
 
   return (
     <DashboardLayout>
-      <div className="bg-[#f5f5f5] min-h-screen p-4 md:p-6">
-
-        {/* HEADER */}
-        <div className="flex items-center gap-3 mb-4">
-          <ArrowLeft />
-          <h1 className="font-semibold text-lg">Create Assignment</h1>
-        </div>
-
+      <div className="mt-4">
         {/* PROGRESS */}
         <div className="w-full h-2 bg-gray-200 rounded-full mb-6">
           <div className="w-1/2 h-full bg-black rounded-full"></div>
@@ -87,7 +79,7 @@ export default function CreateAssignmentPage() {
             className="hidden"
             onChange={(e) => setSelectedFile(e.target.files?.[0])}
           />
-          <div 
+          <div
             onClick={() => document.getElementById("file-upload")?.click()}
             className="border-2 border-dashed rounded-xl p-6 text-center mb-4 cursor-pointer hover:border-black transition-colors"
           >
@@ -96,7 +88,7 @@ export default function CreateAssignmentPage() {
               {selectedFile ? selectedFile.name : "Choose a file or drag & drop it here"}
             </p>
             <span className="mt-3 inline-block px-4 py-2 bg-gray-100 rounded-full text-sm">
-               {selectedFile ? "Change File" : "Browse Files"}
+              {selectedFile ? "Change File" : "Browse Files"}
             </span>
           </div>
 
@@ -197,9 +189,9 @@ export default function CreateAssignmentPage() {
           <button className="px-5 py-2 bg-gray-200 rounded-full">
             Previous
           </button>
-          <button 
+          <button
             disabled={loading}
-            onClick={handleNext} 
+            onClick={handleNext}
             className="px-5 py-2 bg-black text-white rounded-full disabled:opacity-50"
           >
             {loading ? "Creating..." : "Next →"}

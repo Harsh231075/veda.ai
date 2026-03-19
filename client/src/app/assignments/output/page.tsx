@@ -24,9 +24,9 @@ function OutputContent() {
             <div className="text-center text-red-500 mt-20 flex flex-col items-center justify-center">
                 <p className="font-semibold text-lg">Failed to generate assignment.</p>
                 <p className="text-sm text-gray-500 mt-1 mb-4">Gemini API encountered an exception processing this job.</p>
-                <button 
-                  onClick={() => window.location.href = "/assignments/create"} 
-                  className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium"
+                <button
+                    onClick={() => window.location.href = "/assignments/create"}
+                    className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium"
                 >
                     Try Recreating
                 </button>
@@ -37,13 +37,12 @@ function OutputContent() {
     const sections = assignment.generatedPaper?.sections || [];
 
     return (
-        <div className="bg-[#f5f5f5] min-h-screen p-4 md:p-6 pb-20 relative">
-            
+        <div className="relative">
+
             {/* TOAST POPUP */}
             {toast && (
-                <div className={`fixed top-5 right-5 p-4 rounded-xl shadow-lg border text-white animate-bounce flex items-center gap-2 z-50 ${
-                    toast.type === 'success' ? 'bg-green-600 border-green-700' : 'bg-red-600 border-red-700'
-                }`}>
+                <div className={`fixed top-24 md:top-5 right-5 p-4 rounded-xl shadow-lg border text-white animate-bounce flex items-center gap-2 z-50 ${toast.type === 'success' ? 'bg-green-600 border-green-700' : 'bg-red-600 border-red-700'
+                    }`}>
                     <span className="font-medium text-sm">{toast.message}</span>
                     <button onClick={() => setToast(null)} className="ml-2 font-bold text-lg leading-none">×</button>
                 </div>
@@ -51,9 +50,8 @@ function OutputContent() {
 
             <div className="max-w-4xl mx-auto">
                 {/* HEADERS */}
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Generated Assessment</h1>
-                    <button 
+                <div className="flex justify-end items-center mb-6">
+                    <button
                         onClick={publish}
                         disabled={publishing || assignment.isPublished}
                         className="bg-black text-white px-6 py-2 rounded-full font-medium shadow-md transition active:scale-95 disabled:opacity-50 disabled:active:scale-100"
@@ -64,13 +62,13 @@ function OutputContent() {
 
                 {/* PAPER BODY CONTAINER */}
                 <div className="bg-white p-6 md:p-12 rounded-2xl shadow-md border">
-                    
+
                     {/* PAPER DETAILS SECTION */}
                     <div className="border-b-2 border-dashed border-gray-300 pb-8 mb-8 text-center">
                         <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-8 uppercase text-gray-800">
                             VedaAI Internal Assessment
                         </h2>
-                        
+
                         <div className="flex flex-col md:flex-row justify-between gap-6 px-4 md:px-0 text-left">
                             <div className="flex-1 border-b border-gray-300 pb-2">
                                 <span className="text-gray-500 font-semibold mr-2">Name:</span>
@@ -96,7 +94,7 @@ function OutputContent() {
                                     </p>
                                 )}
                             </div>
-                            
+
                             <div className="space-y-8">
                                 {section.questions.map((q: any, qIdx: number) => (
                                     <div key={qIdx} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition">
@@ -106,22 +104,21 @@ function OutputContent() {
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start gap-4">
                                                 <p className="font-medium text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">{q.questionText}</p>
-                                                
+
                                                 {/* BADGES */}
                                                 <div className="flex gap-2 flex-col items-end shrink-0">
                                                     <span className="text-[11px] px-2.5 py-1 bg-black text-white rounded-md font-bold uppercase tracking-wide">
                                                         {q.marks} Marks
                                                     </span>
-                                                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider ${
-                                                        q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                                                        q.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                                                        'bg-red-100 text-red-700'
-                                                    }`}>
+                                                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider ${q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                                                            q.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                                                                'bg-red-100 text-red-700'
+                                                        }`}>
                                                         {q.difficulty}
                                                     </span>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* MCQ OPTIONS */}
                                             {q.options && q.options.length > 0 && (
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
@@ -139,7 +136,7 @@ function OutputContent() {
                             </div>
                         </div>
                     ))}
-                    
+
                     {sections.length === 0 && (
                         <p className="text-center text-gray-500 italic py-10">No sections were generated.</p>
                     )}
