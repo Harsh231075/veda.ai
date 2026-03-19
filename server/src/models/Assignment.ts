@@ -16,6 +16,7 @@ export interface ISection {
 
 export interface IAssignment extends Document {
     createdBy: mongoose.Types.ObjectId;
+    title?: string;
     status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
     isPublished: boolean;
     dueDate?: Date;
@@ -23,6 +24,7 @@ export interface IAssignment extends Document {
     sourceMaterial?: string;
     questionConfig: { type: string; count: number; marks: number }[];
     generatedPaper?: {
+        title?: string;
         sections: ISection[];
     };
     failureReason?: string;
@@ -32,6 +34,7 @@ export interface IAssignment extends Document {
 
 const AssignmentSchema = new Schema<IAssignment>({
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    title: { type: String },
     status: { type: String, enum: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"], default: "PENDING" },
     isPublished: { type: Boolean, default: false },
     dueDate: { type: Date },
@@ -44,6 +47,7 @@ const AssignmentSchema = new Schema<IAssignment>({
     }],
     failureReason: { type: String },
     generatedPaper: {
+        title: { type: String },
         sections: [{
             title: { type: String },
             instructions: { type: String },

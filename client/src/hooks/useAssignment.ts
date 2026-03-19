@@ -45,3 +45,41 @@ export const useCreateAssignment = () => {
 
     return { submitAssignment, loading, error };
 };
+
+import { useEffect } from "react";
+import { getAssignmentsByTeacherApi, getAllAssignmentsApi } from "@/services/assignment.service";
+
+export const useGetAssignments = () => {
+    const [assignments, setAssignments] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchAssignments = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            const storedUser = localStorage.getItem("user");
+            if (!storedUser) throw new Error("Please mock login first on /login");
+            const user = JSON.parse(storedUser);
+
+            let data = [];
+            if (user.role === "teacher") {
+                data = await getAssignmentsByTeacherApi(user._id);
+            } else {
+                data = await getAllAssignmentsApi();
+            }
+            setAssignments(data);
+        } catch (err: any) {
+            setError(err.message || "Failed to fetch assignments");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAssignments();
+    }, []);
+
+    return { assignments, loading, error, refetch: fetchAssignments };
+};

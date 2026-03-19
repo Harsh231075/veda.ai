@@ -3,6 +3,9 @@ import { z } from "zod";
 export type QuestionConfig = { type: string; count: number; marks: number }[];
 
 export const AssessmentSchema = z.object({
+  title: z
+    .string()
+    .describe("A 3-5 word concise topic title summarizing the content, e.g., 'Web Development Fundamentals', 'Quiz on Electricity'"),
   sections: z.array(
     z.object({
       title: z.string().describe("E.g., Section A: Multiple Choice Questions"),
@@ -28,6 +31,7 @@ export const AssessmentSchema = z.object({
 export type Assessment = z.infer<typeof AssessmentSchema>;
 
 const ASSESSMENT_SCHEMA_TEXT = `{
+  "title": "string",
   "sections": [
     {
       "title": "string",
@@ -86,7 +90,7 @@ export const normalizeAssessment = (input: unknown): Assessment => {
       };
     });
 
-    const converted = { sections };
+    const converted = { title: "Generated Assessment", sections };
     const convertedParsed = AssessmentSchema.safeParse(converted);
     if (convertedParsed.success) return convertedParsed.data;
   }

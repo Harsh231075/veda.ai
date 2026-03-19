@@ -42,6 +42,9 @@ export const initWorker = () => {
             // Save COMPLETED
             assignment.status = "COMPLETED";
             assignment.generatedPaper = generated;
+            if (generated?.title) {
+                assignment.title = generated.title;
+            }
             await assignment.save();
 
             // Emit WS event

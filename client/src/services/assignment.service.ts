@@ -27,3 +27,21 @@ export const publishAssignmentApi = async (id: string) => {
     if (!res.ok) throw new Error("Failed to publish assignment");
     return res.json();
 };
+
+export const getAssignmentsByTeacherApi = async (teacherId: string) => {
+    const res = await fetch(`${API_BASE_URL}/assignments/teacher/${teacherId}`);
+    if (!res.ok) throw new Error("Failed to load assignments");
+    return res.json();
+};
+
+export const getAllAssignmentsApi = async () => {
+    const res = await fetch(`${API_BASE_URL}/assignments`);
+    if (!res.ok) throw new Error("Failed to load assignments");
+    return res.json();
+};
+
+export const deleteAssignmentApi = async (id: string) => {
+    const res = await fetch(`${API_BASE_URL}/assignments/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Failed to delete assignment");
+    return res.json();
+};

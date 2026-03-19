@@ -118,3 +118,16 @@ export const publishAssignment = async (req: Request, res: Response): Promise<vo
         res.status(500).json({ error: error.message });
     }
 };
+
+export const deleteAssignment = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const assignment = await Assignment.findByIdAndDelete(req.params.id);
+        if (!assignment) {
+            res.status(404).json({ error: "Assignment not found" });
+            return;
+        }
+        res.json({ message: "Assignment deleted successfully!" });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
