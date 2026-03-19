@@ -6,10 +6,13 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import MobileHeader from "./MobileHeader";
 
+let isAccessCheckedGlobal = false;
+let isAllowedGlobal = false;
+
 export default function DashboardLayout({ children, hideHeader = false }: { children: React.ReactNode; hideHeader?: boolean }) {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
-  const [allowed, setAllowed] = useState(false);
+  const [isChecking, setIsChecking] = useState(!isAccessCheckedGlobal);
+  const [allowed, setAllowed] = useState(isAllowedGlobal);
 
   useEffect(() => {
     let ok = false;
@@ -29,8 +32,10 @@ export default function DashboardLayout({ children, hideHeader = false }: { chil
       router.replace("/login");
     } else {
       setAllowed(true);
+      isAllowedGlobal = true; // Cache it
     }
     setIsChecking(false);
+    isAccessCheckedGlobal = true; // Cache it
   }, [router]);
 
   if (isChecking) {
