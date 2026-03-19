@@ -19,14 +19,16 @@ export default function LoginPage() {
 
     const handleLogin = () => {
         const user = users.find(u => u._id === selectedUserId);
-        if (user) {
-            localStorage.setItem("user", JSON.stringify(user));
-            if (user.role === "teacher") {
-                router.push("/assignments/create");
-            } else {
-                router.push("/assignments"); 
-            }
+        if (!user) return;
+
+        // Only allow teacher accounts into the dashboard
+        if (user.role !== "teacher") {
+            alert("Only teacher accounts can access the dashboard in this demo.");
+            return;
         }
+
+        localStorage.setItem("user", JSON.stringify(user));
+        router.push("/assignments/create");
     }
 
     return (
@@ -34,8 +36,8 @@ export default function LoginPage() {
             <div className="bg-white p-8 rounded-2xl shadow-sm max-w-sm w-full">
                 <h1 className="text-2xl font-bold mb-6 text-center">VedaAI Login</h1>
                 <p className="text-sm text-gray-500 mb-4 text-center">Select a demo account to mimic authentication.</p>
-                
-                <select 
+
+                <select
                     value={selectedUserId}
                     onChange={(e) => setSelectedUserId(e.target.value)}
                     className="w-full border rounded-xl px-4 py-3 mb-6 bg-gray-50"
@@ -47,7 +49,7 @@ export default function LoginPage() {
                     ))}
                 </select>
 
-                <button 
+                <button
                     onClick={handleLogin}
                     className="w-full bg-black text-white rounded-full py-3 font-medium transition active:scale-95"
                 >

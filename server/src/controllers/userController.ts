@@ -3,18 +3,13 @@ import { User } from "../models/User";
 
 export const getOrCreateUsers = async (req: Request, res: Response) => {
     try {
-        // Find existing mock users or create them
+        // Ensure at least one mock teacher user exists
         let teacher = await User.findOne({ role: "teacher" });
         if (!teacher) {
             teacher = await User.create({ name: "Mr. Sharma", email: "teacher@veda.ai", role: "teacher" });
         }
 
-        let student = await User.findOne({ role: "student" });
-        if (!student) {
-            student = await User.create({ name: "Raju", email: "student@veda.ai", role: "student" });
-        }
-
-        res.json({ teacher, student });
+        res.json({ teacher });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
@@ -22,8 +17,9 @@ export const getOrCreateUsers = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-        const users = await User.find({});
-        res.json(users);
+        // For this demo, only expose teacher accounts to the client
+        const teachers = await User.find({ role: "teacher" });
+        res.json(teachers);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }

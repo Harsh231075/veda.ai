@@ -1,10 +1,50 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import MobileHeader from "./MobileHeader";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    let ok = false;
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.role === "teacher") {
+          ok = true;
+        }
+      }
+    } catch {
+      // ignore parsing errors
+    }
+
+    if (!ok) {
+      router.replace("/login");
+    } else {
+      setAllowed(true);
+    }
+    setIsChecking(false);
+  }, [router]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-sm text-gray-500">Checking access...</p>
+      </div>
+    );
+  }
+
+  if (!allowed) {
+    return null;
+  }
+
   return (
     <div className="flex bg-gray-50 min-h-screen overflow-hidden">
       <Sidebar />
