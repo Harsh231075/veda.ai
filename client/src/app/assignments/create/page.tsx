@@ -195,18 +195,23 @@ export default function CreateAssignmentPage() {
             />
 
             {isSupported && (
-              <button
-                type="button"
-                onClick={toggleListening}
-                className={`absolute bottom-4 right-4 p-1.5 rounded-full transition-all ${
-                  isListening
-                    ? "bg-red-100 text-red-600 animate-pulse"
-                    : "text-gray-400 hover:text-black hover:bg-gray-100"
-                }`}
-                title={isListening ? "Stop listening" : "Start voice input"}
-              >
-                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-              </button>
+              <div className="absolute bottom-4 right-4 flex items-center justify-center">
+                {isListening && (
+                  <span className="absolute w-10 h-10 bg-red-400 rounded-full animate-ping opacity-75"></span>
+                )}
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  className={`w-10 h-10 flex items-center justify-center rounded-full shadow-md transition-all z-10 ${
+                    isListening
+                      ? "bg-red-500 text-white"
+                      : "bg-black text-white hover:bg-gray-800 hover:scale-110 active:scale-95"
+                  }`}
+                  title={isListening ? "Stop listening" : "Start voice input"}
+                >
+                  {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+                </button>
+              </div>
             )}
 
             {isListening && (
