@@ -23,12 +23,14 @@ export default function AssignmentsPage() {
 
       <AssignmentGrid assignments={assignments} search={search} status={status} />
 
-      {/* Floating Button */}
-      <Link href="/assignments/create" className="fixed bottom-6 left-1/2 -translate-x-1/2">
-        <button className="bg-black text-white px-6 py-3 rounded-full shadow-lg">
-          + Create Assignment
-        </button>
-      </Link>
+      {/* Bottom Bar for Desktop */}
+      <div className="fixed bottom-0 md:left-72 left-0 right-0 p-4 bg-white/70 backdrop-blur-md border-t border-gray-100 z-10 hidden md:flex justify-center">
+        <Link href="/assignments/create">
+          <button className="bg-black text-white px-6 py-3 rounded-full shadow-lg">
+            + Create Assignment
+          </button>
+        </Link>
+      </div>
     </DashboardLayout>
   );
 }
