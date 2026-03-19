@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getAssignmentApi, publishAssignmentApi } from "@/services/assignment.service";
 import { useRouter } from "next/navigation";
+import { playSuccessSound } from "@/services/playSound";
 
 export const useAssignmentOutput = (assignmentId: string | null) => {
     const [assignment, setAssignment] = useState<any>(null);
@@ -8,6 +9,7 @@ export const useAssignmentOutput = (assignmentId: string | null) => {
     const [publishing, setPublishing] = useState(false);
     const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
     const router = useRouter();
+    const prevStatusRef = useRef<string | null>(null);
 
     useEffect(() => {
         if (!assignmentId) return;
@@ -18,6 +20,15 @@ export const useAssignmentOutput = (assignmentId: string | null) => {
             try {
                 const data = await getAssignmentApi(assignmentId);
                 setAssignment(data);
+
+                // Play sound when status transitions to COMPLETED
+                if (
+                    data.status === "COMPLETED" &&
+                    prevStatusRef.current !== "COMPLETED"
+                ) {
+                    playSuccessSound();
+                }
+                prevStatusRef.current = data.status;
                 
                 if (data.status === "FAILED") {
                     setToast({ message: "Failed to generate paper. Please try recreating.", type: "error" });
@@ -33,7 +44,6 @@ export const useAssignmentOutput = (assignmentId: string | null) => {
             } catch (err) {
                 console.error(err);
                 setLoading(false);
-                // Retry in 5 seconds on fail
                 timer = setTimeout(fetchAssignment, 5000);
             }
         };

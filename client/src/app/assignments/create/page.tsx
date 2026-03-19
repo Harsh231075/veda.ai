@@ -1,13 +1,15 @@
 "use client";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useCreateAssignment } from "@/hooks/useAssignment";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
 import {
   UploadCloud,
   Plus,
   Minus,
   X,
-  Mic
+  Mic,
+  MicOff
 } from "lucide-react";
 
 type QuestionType = {
@@ -27,6 +29,15 @@ export default function CreateAssignmentPage() {
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
 
   const { submitAssignment, loading, error } = useCreateAssignment();
+
+  const handleSpeechResult = useCallback((text: string) => {
+    setInstructions((prev) => {
+      const trimmed = prev.trim();
+      return trimmed ? trimmed + " " + text : text;
+    });
+  }, []);
+
+  const { isListening, toggleListening, isSupported } = useSpeechToText(handleSpeechResult);
 
   const handleNext = () => {
     submitAssignment(dueDate, instructions, questions, selectedFile);
@@ -183,9 +194,27 @@ export default function CreateAssignmentPage() {
               placeholder="e.g Generate a question paper for 3 hour exam duration..."
             />
 
-            <button className="absolute bottom-4 right-4 text-gray-500 hover:text-black">
-              <Mic size={18} />
-            </button>
+            {isSupported && (
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`absolute bottom-4 right-4 p-1.5 rounded-full transition-all ${
+                  isListening
+                    ? "bg-red-100 text-red-600 animate-pulse"
+                    : "text-gray-400 hover:text-black hover:bg-gray-100"
+                }`}
+                title={isListening ? "Stop listening" : "Start voice input"}
+              >
+                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              </button>
+            )}
+
+            {isListening && (
+              <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                Listening... Speak now
+              </p>
+            )}
           </div>
 
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}

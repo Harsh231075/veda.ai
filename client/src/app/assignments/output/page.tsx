@@ -14,20 +14,55 @@ function OutputContent() {
 
     if (loading || !assignment || assignment.status === "PENDING" || assignment.status === "PROCESSING") {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-                <p className="font-medium">AI is generating your question paper...</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+                {/* Animated dots loader */}
+                <div className="flex gap-2">
+                    <span className="w-3 h-3 bg-black rounded-full animate-bounce [animation-delay:0ms]" />
+                    <span className="w-3 h-3 bg-black rounded-full animate-bounce [animation-delay:150ms]" />
+                    <span className="w-3 h-3 bg-black rounded-full animate-bounce [animation-delay:300ms]" />
+                </div>
+
+                <div className="text-center">
+                    <p className="font-semibold text-lg">Generating your paper</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                        AI is crafting questions based on your instructions...
+                    </p>
+                </div>
+
+                {/* Progress steps */}
+                <div className="flex flex-col gap-3 mt-4 text-sm">
+                    <div className="flex items-center gap-2 text-green-600">
+                        <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-xs">✓</span>
+                        Instructions received
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-800">
+                        <span className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center animate-pulse">
+                            <span className="w-2 h-2 bg-black rounded-full" />
+                        </span>
+                        Generating questions...
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300">
+                        <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">3</span>
+                        Formatting paper
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (assignment.status === "FAILED") {
         return (
-            <div className="text-center text-red-500 mt-20 flex flex-col items-center justify-center">
-                <p className="font-semibold text-lg">Failed to generate assignment.</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+                    <span className="text-red-500 text-2xl">✕</span>
+                </div>
+                <p className="font-semibold text-lg">Generation Failed</p>
+                <p className="text-sm text-gray-400 max-w-sm text-center">
+                    Something went wrong while generating your paper. Please try again with different instructions.
+                </p>
                 <button
                     onClick={() => window.location.href = "/assignments/create"}
-                    className="bg-black text-white px-4 py-2 mt-4 text-sm"
+                    className="mt-2 bg-black text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition active:scale-95"
                 >
                     Try Again
                 </button>
