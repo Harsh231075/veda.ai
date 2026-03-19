@@ -5,7 +5,7 @@
 [![Express](https://img.shields.io/badge/Express-JS-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![LangChain](https://img.shields.io/badge/LangChain-Enabled-121212?style=for-the-badge&logo=chainlink&logoColor=white)](https://js.langchain.com/)
 
-**Veda** ek cutting-edge, AI-powered educational platform hai jo manual coursework automate karne ke liye banaya gaya hai. Ye AI dynamic modeling se support leta hai like **Google Gemini**, **OpenAI**, and **Groq**, full standard workflow concurrency buffers ko safe aur rapid nodes provide karne ke liye `BullMQ` + `Redis` stack implementation deploy karta hai.
+**Veda** is a cutting-edge, AI-powered educational workspace built to automate manual coursework creation for students and educators. It leverages dynamic AI models including **Google Gemini**, **OpenAI**, and **Groq**, employing a buffered `BullMQ` + `Redis` concurrency queue logic task runners system to manage API limits safely without throttling UI nodes.
 
 ---
 
