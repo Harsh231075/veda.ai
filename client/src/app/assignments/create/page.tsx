@@ -32,6 +32,7 @@ export default function CreateAssignmentPage() {
   const [dueDate, setDueDate] = useState("");
   const [instructions, setInstructions] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
+  const [validationError, setValidationError] = useState("");
 
   const { submitAssignment, loading, error } = useCreateAssignment();
 
@@ -45,6 +46,29 @@ export default function CreateAssignmentPage() {
   const { isListening, toggleListening, isSupported } = useSpeechToText(handleSpeechResult);
 
   const handleNext = () => {
+    setValidationError("");
+
+    if (!selectedFile) {
+      setValidationError("Please upload a document or image file.");
+      return;
+    }
+
+    if (!dueDate) {
+      setValidationError("Please select a due date.");
+      return;
+    }
+
+    if (questions.length === 0) {
+      setValidationError("Please add at least one question type.");
+      return;
+    }
+
+    const validQuestions = questions.filter(q => q.type.trim() && q.count > 0 && q.marks > 0);
+    if (validQuestions.length === 0) {
+      setValidationError("At least one question type must have valid Name, Count and Marks.");
+      return;
+    }
+
     submitAssignment(dueDate, instructions, questions, selectedFile);
   };
 
@@ -270,7 +294,7 @@ export default function CreateAssignmentPage() {
             )}
           </div>
 
-          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+          {(error || validationError) && <p className="text-red-500 text-sm mt-3">{error || validationError}</p>}
         </div>
 
         {/* FOOTER */}
