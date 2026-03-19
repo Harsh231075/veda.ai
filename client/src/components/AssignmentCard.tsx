@@ -49,7 +49,7 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
   const truncatedTitle = titleText.length > 50 ? titleText.slice(0, 50) + "..." : titleText;
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm relative hover:shadow-md transition">
+    <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 relative flex flex-col md:min-h-[165px] justify-between">
 
       {/* Status Badge */}
       <span className={`absolute top-4 right-12 text-xs px-2.5 py-1 rounded-full font-medium ${getStatusColor(assignment.status)}`}>

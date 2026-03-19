@@ -7,6 +7,7 @@ import {
   Plus,
   Minus,
   X,
+  Mic
 } from "lucide-react";
 
 type QuestionType = {
@@ -15,12 +16,12 @@ type QuestionType = {
   marks: number;
 };
 
-
 export default function CreateAssignmentPage() {
   const [questions, setQuestions] = useState<QuestionType[]>([
     { type: "Multiple Choice Questions", count: 4, marks: 1 },
     { type: "Short Questions", count: 3, marks: 2 },
   ]);
+
   const [dueDate, setDueDate] = useState("");
   const [instructions, setInstructions] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
@@ -31,7 +32,6 @@ export default function CreateAssignmentPage() {
     submitAssignment(dueDate, instructions, questions, selectedFile);
   };
 
-  // update count/marks
   const updateValue = (index: number, key: "count" | "marks", value: number) => {
     const updated = [...questions];
     updated[index][key] = Math.max(0, value);
@@ -50,24 +50,22 @@ export default function CreateAssignmentPage() {
   };
 
   const totalQuestions = questions.reduce((acc, q) => acc + q.count, 0);
-  const totalMarks = questions.reduce(
-    (acc, q) => acc + q.count * q.marks,
-    0
-  );
+  const totalMarks = questions.reduce((acc, q) => acc + q.count * q.marks, 0);
 
   return (
     <DashboardLayout>
-      <div className="mt-4">
+      <div className="mt-6">
+
         {/* PROGRESS */}
-        <div className="w-full h-2 bg-gray-200 rounded-full mb-6">
+        <div className="w-full h-2 bg-gray-200 rounded-full mb-8">
           <div className="w-1/2 h-full bg-black rounded-full"></div>
         </div>
 
-        {/* CARD */}
-        <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm">
+        {/* MAIN CARD */}
+        <div className="bg-white rounded-3xl p-8 shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
 
-          <h2 className="font-semibold text-lg">Assignment Details</h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <h2 className="text-lg font-semibold">Assignment Details</h2>
+          <p className="text-sm text-gray-400 mb-6">
             Basic information about your assignment
           </p>
 
@@ -75,19 +73,21 @@ export default function CreateAssignmentPage() {
           <input
             type="file"
             id="file-upload"
-            accept=".pdf,.txt"
             className="hidden"
             onChange={(e) => setSelectedFile(e.target.files?.[0])}
           />
+
           <div
             onClick={() => document.getElementById("file-upload")?.click()}
-            className="border-2 border-dashed rounded-xl p-6 text-center mb-4 cursor-pointer hover:border-black transition-colors"
+            className="border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center bg-gray-50 mb-6 cursor-pointer"
           >
-            <UploadCloud className="mx-auto mb-2" />
-            <p className="text-sm">
+            <UploadCloud className="mx-auto mb-2 text-gray-500" />
+            <p className="text-sm font-medium">
               {selectedFile ? selectedFile.name : "Choose a file or drag & drop it here"}
             </p>
-            <span className="mt-3 inline-block px-4 py-2 bg-gray-100 rounded-full text-sm">
+            <p className="text-xs text-gray-400 mt-1">JPEG, PNG, upto 10MB</p>
+
+            <span className="mt-4 inline-block px-4 py-2 bg-white rounded-full text-sm shadow">
               {selectedFile ? "Change File" : "Browse Files"}
             </span>
           </div>
@@ -97,15 +97,15 @@ export default function CreateAssignmentPage() {
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full border rounded-xl px-4 py-2 mb-4"
+            className="w-full rounded-full border px-4 py-3 mb-6"
           />
 
           {/* QUESTION TYPES */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {questions.map((q, i) => (
               <div
                 key={i}
-                className="bg-gray-100 p-3 rounded-xl flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+                className="flex items-center justify-between bg-gray-50 rounded-full px-4 py-3"
               >
                 {/* TYPE */}
                 <input
@@ -115,45 +115,37 @@ export default function CreateAssignmentPage() {
                     updated[i].type = e.target.value;
                     setQuestions(updated);
                   }}
-                  className="bg-transparent outline-none w-full md:w-1/3"
+                  className="bg-transparent outline-none w-1/3 text-sm font-medium"
                 />
 
                 {/* CONTROLS */}
                 <div className="flex items-center gap-4">
 
                   {/* COUNT */}
-                  <div className="flex items-center bg-white rounded-full px-3 py-1">
-                    <button
-                      onClick={() => updateValue(i, "count", q.count - 1)}
-                    >
-                      <Minus size={16} />
+                  <div className="flex items-center gap-2 bg-white rounded-full px-3 py-1 shadow-sm">
+                    <button onClick={() => updateValue(i, "count", q.count - 1)}>
+                      <Minus size={14} />
                     </button>
-                    <span className="px-2">{q.count}</span>
-                    <button
-                      onClick={() => updateValue(i, "count", q.count + 1)}
-                    >
-                      <Plus size={16} />
+                    <span>{q.count}</span>
+                    <button onClick={() => updateValue(i, "count", q.count + 1)}>
+                      <Plus size={14} />
                     </button>
                   </div>
 
                   {/* MARKS */}
-                  <div className="flex items-center bg-white rounded-full px-3 py-1">
-                    <button
-                      onClick={() => updateValue(i, "marks", q.marks - 1)}
-                    >
-                      <Minus size={16} />
+                  <div className="flex items-center gap-2 bg-white rounded-full px-3 py-1 shadow-sm">
+                    <button onClick={() => updateValue(i, "marks", q.marks - 1)}>
+                      <Minus size={14} />
                     </button>
-                    <span className="px-2">{q.marks}</span>
-                    <button
-                      onClick={() => updateValue(i, "marks", q.marks + 1)}
-                    >
-                      <Plus size={16} />
+                    <span>{q.marks}</span>
+                    <button onClick={() => updateValue(i, "marks", q.marks + 1)}>
+                      <Plus size={14} />
                     </button>
                   </div>
 
                   {/* DELETE */}
                   <button onClick={() => removeType(i)}>
-                    <X size={18} />
+                    <X size={16} />
                   </button>
                 </div>
               </div>
@@ -161,38 +153,54 @@ export default function CreateAssignmentPage() {
           </div>
 
           {/* ADD TYPE */}
-          <button
+          <div
             onClick={addType}
-            className="flex items-center gap-2 mt-4 text-sm"
+            className="flex items-center gap-2 mt-4 cursor-pointer"
           >
-            <Plus size={18} /> Add Question Type
-          </button>
+            <div className="w-8 h-8 bg-white border border-gray-200 shadow-sm text-black rounded-full flex items-center justify-center">
+              <Plus size={16} />
+            </div>
+            <span className="text-sm font-medium">Add Question Type</span>
+          </div>
 
           {/* TOTAL */}
-          <div className="mt-6 text-right text-sm">
+          <div className="text-right text-sm text-gray-600 mt-6">
             <p>Total Questions: {totalQuestions}</p>
             <p>Total Marks: {totalMarks}</p>
           </div>
 
-          {/* ADDITIONAL */}
-          <textarea
-            placeholder="Additional instructions..."
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            className="w-full border rounded-xl px-4 py-3 mt-4"
-          ></textarea>
+          {/* TEXTAREA + MIC */}
+          <div className="relative mt-6">
+            <label className="text-sm font-medium mb-2 block">
+              Additional Information (For better output)
+            </label>
+
+            <textarea
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              className="w-full rounded-2xl border p-4 pr-12 text-sm resize-none"
+              rows={4}
+              placeholder="e.g Generate a question paper for 3 hour exam duration..."
+            />
+
+            <button className="absolute bottom-4 right-4 text-gray-500 hover:text-black">
+              <Mic size={18} />
+            </button>
+          </div>
+
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
         </div>
 
-        {/* FOOTER BUTTONS */}
+        {/* FOOTER */}
         <div className="flex justify-between mt-6">
-          <button className="px-5 py-2 bg-gray-200 rounded-full">
+          <button className="px-6 py-3 bg-gray-200 rounded-full text-sm">
             Previous
           </button>
+
           <button
             disabled={loading}
             onClick={handleNext}
-            className="px-5 py-2 bg-black text-white rounded-full disabled:opacity-50"
+            className="px-6 py-3 bg-black text-white rounded-full text-sm"
           >
             {loading ? "Creating..." : "Next →"}
           </button>

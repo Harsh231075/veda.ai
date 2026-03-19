@@ -18,7 +18,7 @@ export default function FilterBar({
     <div className="flex flex-row gap-2 mt-4 items-center w-full">
 
       {/* Filter / Status */}
-      <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl shadow-sm">
+      <div className="flex items-center gap-2 bg-white px-3 py-2 md:py-3.5 rounded-xl shadow-md">
         <Filter size={18} />
         <select
           value={status}
@@ -34,7 +34,7 @@ export default function FilterBar({
       </div>
 
       {/* Search */}
-      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm flex-1">
+      <div className="flex items-center gap-2 bg-white px-4 py-2 md:py-3.5 rounded-xl shadow-md flex-1">
         <Search size={18} />
         <input
           placeholder="Search Assignment"

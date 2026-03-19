@@ -23,13 +23,16 @@ export default function AssignmentsPage() {
 
       <AssignmentGrid assignments={assignments} search={search} status={status} />
 
-      {/* Bottom Bar for Desktop */}
-      <div className="fixed bottom-0 md:left-72 left-0 right-0 p-4 bg-white/70 backdrop-blur-md border-t border-gray-100 z-10 hidden md:flex justify-center">
+      <div className="fixed bottom-0 md:left-72 left-0 right-0 p-4 
+bg-white/60 backdrop-blur-xl supports-[backdrop-filter]:bg-white/50 
+border-t border-gray-200 z-20 hidden md:flex justify-center">
+
         <Link href="/assignments/create">
-          <button className="bg-black text-white px-6 py-3 rounded-full shadow-lg">
+          <button className="bg-black text-white px-6 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
             + Create Assignment
           </button>
         </Link>
+
       </div>
     </DashboardLayout>
   );
