@@ -83,7 +83,7 @@ export default function LoginPage() {
                                 key={u._id}
                                 onClick={() => setSelectedUser(u)}
                                 className={`flex justify-between items-center px-4 py-3 rounded-xl border transition text-left ${selectedUser?._id === u._id
-                                    ? "border-black bg-black text-white"
+                                    ? "border-black  text-white"
                                     : "border-gray-200 hover:bg-gray-50"
                                     }`}
                             >
