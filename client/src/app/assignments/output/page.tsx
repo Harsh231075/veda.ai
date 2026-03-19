@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useAssignmentOutput } from "@/hooks/useAssignmentOutput";
 import { RefreshCw, Download, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { downloadPaperAsPdf } from "@/services/downloadPdf";
 
 function OutputContent() {
     const searchParams = useSearchParams();
@@ -62,7 +63,7 @@ function OutputContent() {
                     </button>
 
                     <button
-                        onClick={() => window.print()}
+                        onClick={() => downloadPaperAsPdf("paper-content", assignment.title || "Question_Paper")}
                         className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-95 transition flex items-center gap-1"
                     >
                         <Download size={15} /> <span className="hidden sm:inline">Download</span>
@@ -83,7 +84,7 @@ function OutputContent() {
 
             {/* PAPER */}
             <div className="py-6 flex justify-center no-print:bg-transparent">
-                <div className="w-[794px] min-h-[1123px] bg-white px-12 py-10 text-black border border-gray-200 shadow-sm rounded-lg">
+                <div id="paper-content" className="w-[794px] min-h-[1123px] bg-white px-12 py-10 text-black border border-gray-200 shadow-sm rounded-lg">
 
                     {/* HEADER */}
                     <div className="text-center mb-8">
