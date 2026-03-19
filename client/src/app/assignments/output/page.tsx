@@ -107,12 +107,12 @@ function OutputContent() {
 
                                                 {/* BADGES */}
                                                 <div className="flex gap-2 flex-col items-end shrink-0">
-                                                    <span className="text-[11px] px-2.5 py-1 bg-black text-white rounded-md font-bold uppercase tracking-wide">
+                                                    <span className="text-[11px] px-2.5 py-1 bg-orange-500 text-white rounded-md font-bold uppercase tracking-wide">
                                                         {q.marks} Marks
                                                     </span>
                                                     <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider ${q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                                                            q.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                                                                'bg-red-100 text-red-700'
+                                                        q.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                                                            'bg-red-100 text-red-700'
                                                         }`}>
                                                         {q.difficulty}
                                                     </span>
