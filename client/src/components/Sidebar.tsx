@@ -91,7 +91,7 @@ export default function Sidebar() {
       </div>
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
-      <div className="md:hidden fixed bottom-4 left-4 right-4 bg-black shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex justify-around items-center py-2.5 px-2 rounded-full z-40">
+      <div className="md:hidden fixed bottom-4 left-4 right-4 bg-black/85 backdrop-blur-lg border border-white/5 shadow-[0_12px_40px_rgba(0,0,0,0.25)] flex justify-around items-center px-6 py-2 rounded-full z-40">
         {menuItems.map((item, i) => {
           const Icon = item.icon;
           const isActive =
@@ -102,13 +102,16 @@ export default function Sidebar() {
             <Link
               key={i}
               href={item.href}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium transition active:scale-95 ${isActive ? "text-white" : "text-gray-400"}`}
+              className="flex flex-col items-center gap-0.5 transition active:scale-95 duration-200"
             >
-              <div className={`p-1.5 rounded-full transition ${isActive ? "bg-white/10" : ""}`}>
-                <Icon size={18} className={isActive ? "text-white" : "text-gray-400"} />
+              <div className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 ${isActive ? "bg-white/15 shadow-sm" : "bg-transparent"}`}>
+                <Icon 
+                  size={18} 
+                  className={`transition-colors duration-200 ${isActive ? "text-white" : "text-gray-400"}`} 
+                />
               </div>
               <span 
-                className={isActive ? "font-semibold" : ""} 
+                className={`text-[11px] transition-all duration-200 ${isActive ? "font-semibold" : "font-normal"}`} 
                 style={{ color: isActive ? "#ffffff" : "#9ca3af" }}
               >
                 {item.name}
