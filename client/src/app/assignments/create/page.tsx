@@ -288,14 +288,6 @@ export default function CreateAssignmentPage() {
           </button>
         </div>
 
-        {/* Floating Add Question button for Mobile */}
-        <button 
-          onClick={addType}
-          className="md:hidden fixed bottom-28 right-6 w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-[0_8px_25px_rgba(0,0,0,0.15)] active:scale-95 hover:scale-105 transition-all z-40"
-        >
-          <Plus size={24} className="stroke-[3]" />
-        </button>
-
       </div>
     </DashboardLayout>
   );
