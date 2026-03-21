@@ -4,7 +4,15 @@ import { AIProviderError } from "../aiService";
 export const extractFencedJson = (text: string): string => {
   const trimmed = text?.trim?.() ?? "";
   const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  return fenced ? fenced[1] : trimmed;
+  if (fenced) return fenced[1];
+
+  const startIdx = trimmed.indexOf("{");
+  const endIdx = trimmed.lastIndexOf("}");
+  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+    return trimmed.substring(startIdx, endIdx + 1);
+  }
+
+  return trimmed;
 };
 
 export const safeJsonParse = (text: string): unknown => {
