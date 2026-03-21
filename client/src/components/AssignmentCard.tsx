@@ -4,6 +4,7 @@ import { deleteAssignmentApi } from "@/services/assignment.service";
 import Link from "next/link";
 import ConfirmationModal from "./ConfirmationModal";
 import Toast from "./Toast";
+import { playDeleteSound } from "@/services/playSound";
 
 export default function AssignmentCard({ assignment, refetch }: { assignment: any; refetch?: () => void }) {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -34,6 +35,9 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
       setIsDeleting(true);
       await deleteAssignmentApi(assignment._id);
       setIsConfirmOpen(false);
+      
+      // Play delete sound effect
+      playDeleteSound();
       
       if (refetch) refetch();
     } catch (err: any) {

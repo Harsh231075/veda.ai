@@ -16,3 +16,17 @@ export const playSuccessSound = () => {
     // Ignore audio errors
   }
 };
+
+export const playDeleteSound = () => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const audio = new Audio("/sounds/delete.mp3");
+    audio.volume = 0.6;
+    audio.play().catch(() => {
+      // Browser may block autoplay — silently ignore
+    });
+  } catch {
+    // Ignore audio errors
+  }
+};
