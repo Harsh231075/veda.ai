@@ -36,14 +36,14 @@ export default function LoginPage() {
 
                 {/* BACKGROUND IMAGE */}
                 <Image
-                    src="/undraw_professor_d7zn.svg"
+                    src="/undraw_educator_6dgp.svg"
                     alt="education"
                     fill
                     className="object-contain p-10"
                 />
 
                 {/* DARK GRADIENT OVERLAY (IMPORTANT) */}
-                <div className="absolute inset-0 bg-linear-to-br from-black/60 via-black/30 to-black/40" />
+                <div className="absolute inset-0 bg-linear-to-br from-black/60 via-black/50 to-black/80" />
 
             </div>
 
