@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import MobileHeader from "./MobileHeader";
+import OnboardingPopup from "./OnboardingPopup";
 
 let isAccessCheckedGlobal = false;
 let isAllowedGlobal = false;
@@ -52,6 +53,7 @@ export default function DashboardLayout({ children, hideHeader = false }: { chil
 
   return (
     <div className="flex bg-gray-50 min-h-screen overflow-hidden">
+      <OnboardingPopup />
       <Sidebar />
       <main className="flex-1 bg-gray-100 overflow-y-auto md:ml-72">
         {!hideHeader && (
