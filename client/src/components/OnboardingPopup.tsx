@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, CheckCircle2, RotateCw, Trash2, Edit, FileText } from "lucide-react";
+import { X, RotateCw, Trash2, Edit, FileText, Download } from "lucide-react";
 
 export default function OnboardingPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +46,12 @@ export default function OnboardingPopup() {
       highlight: false,
     },
     {
+      icon: <Download className="text-gray-700" size={18} />,
+      title: "Download Paper",
+      description: "Save outputs directly as PDFs",
+      highlight: false,
+    },
+    {
       icon: <Trash2 className="text-gray-700" size={18} />,
       title: "Delete Items",
       description: "Organize items with full deletion access",
@@ -55,11 +61,11 @@ export default function OnboardingPopup() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-      
+
       <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)] animate-in zoom-in-95 duration-200 relative flex flex-col border border-gray-100">
-        
+
         {/* Close Icon */}
-        <button 
+        <button
           onClick={handleDismiss}
           className="absolute right-4 top-4 p-1.5 hover:bg-gray-100 rounded-full transition-all text-gray-400 hover:text-gray-600"
         >
@@ -80,17 +86,15 @@ export default function OnboardingPopup() {
         {/* Feature List */}
         <div className="mt-5 space-y-2.5">
           {features.map((item, index) => (
-            <div 
+            <div
               key={index}
-              className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
-                item.highlight 
-                  ? "bg-orange-50/40 border-orange-200/50" 
+              className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${item.highlight
+                  ? "bg-orange-50/40 border-orange-200/50"
                   : "bg-gray-50/50 border-gray-100/80"
-              }`}
+                }`}
             >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                item.highlight ? "bg-orange-100" : "bg-white border border-gray-100 shadow-sm"
-              }`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${item.highlight ? "bg-orange-100" : "bg-white border border-gray-100 shadow-sm"
+                }`}>
                 {item.icon}
               </div>
               <div className="flex-1 min-w-0">
@@ -120,8 +124,8 @@ export default function OnboardingPopup() {
               Don't show again
             </label>
           </div>
-          
-          <button 
+
+          <button
             onClick={handleDismiss}
             className="px-5 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-full transition-all active:scale-95 shadow-sm"
           >
