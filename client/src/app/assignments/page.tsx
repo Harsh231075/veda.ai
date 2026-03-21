@@ -38,7 +38,7 @@ export default function AssignmentsPage() {
         <FilterBar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
       </div>
 
-      <AssignmentGrid assignments={assignments} search={search} status={status} />
+      <AssignmentGrid assignments={assignments} search={search} status={status} refetch={refetch} />
 
       <div className="fixed bottom-0 md:left-72 left-0 right-0 p-4 
 bg-white/60 backdrop-blur-xl supports-[backdrop-filter]:bg-white/50 

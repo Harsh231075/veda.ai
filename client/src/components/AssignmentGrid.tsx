@@ -8,14 +8,17 @@ export default function AssignmentGrid({
   assignments: externalAssignments,
   search = "",
   status = "ALL",
+  refetch: externalRefetch,
 }: {
   assignments?: any[];
   search?: string;
   status?: string;
+  refetch?: () => void;
 }) {
-  const { assignments: fetched = [], loading, error, refetch } = useGetAssignments();
+  const { assignments: fetched = [], loading, error, refetch: internalRefetch } = useGetAssignments();
 
   const assignments = externalAssignments ?? fetched;
+  const refetch = externalRefetch ?? internalRefetch;
 
   if (loading && !externalAssignments) {
     return <p className="text-gray-500 mt-6">Loading assignments...</p>;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Eye, Trash2 } from "lucide-react";
+import { MoreVertical, Eye, Trash2, RefreshCw } from "lucide-react";
 import { deleteAssignmentApi } from "@/services/assignment.service";
 import Link from "next/link";
 import ConfirmationModal from "./ConfirmationModal";
@@ -74,6 +74,10 @@ export default function AssignmentCard({ assignment, refetch }: { assignment: an
           <Link href={`/assignments/output?id=${assignment._id}`} className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
             <Eye size={16} className="text-gray-400" />
             View Output
+          </Link>
+          <Link href={`/assignments/create?regenerate=${assignment._id}`} className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+            <RefreshCw size={16} className="text-gray-400" />
+            Regenerate
           </Link>
           <button
             onClick={() => { setIsConfirmOpen(true); setShowDropdown(false); }}

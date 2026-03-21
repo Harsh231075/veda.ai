@@ -61,7 +61,7 @@ function OutputContent() {
                     Something went wrong while generating your paper. Please try again with different instructions.
                 </p>
                 <button
-                    onClick={() => window.location.href = "/assignments/create"}
+                    onClick={() => window.location.href = `/assignments/create?regenerate=${id}`}
                     className="mt-2 bg-black text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition active:scale-95"
                 >
                     Try Again
@@ -91,7 +91,7 @@ function OutputContent() {
 
                 <div className="flex gap-2">
                     <button
-                        onClick={() => window.location.href = "/assignments/create"}
+                        onClick={() => window.location.href = `/assignments/create?regenerate=${id}`}
                         className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-95 transition flex items-center gap-1"
                     >
                         <RefreshCw size={15} /> <span className="hidden sm:inline">Regenerate</span>

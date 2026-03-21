@@ -9,7 +9,7 @@ export const useCreateAssignment = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    const submitAssignment = async (dueDate: string, instructions: string, questions: any[], file?: File) => {
+    const submitAssignment = async (dueDate: string, instructions: string, questions: any[], file?: File, sourceText?: string) => {
         try {
             setLoading(true);
             setError(null);
@@ -28,6 +28,9 @@ export const useCreateAssignment = () => {
             payload.append("createdBy", teacherId);
             if (file) {
                 payload.append("file", file);
+            }
+            if (sourceText && !file) {
+                payload.append("sourceText", sourceText);
             }
 
             // 3. Create the assignment
