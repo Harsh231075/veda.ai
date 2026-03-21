@@ -125,6 +125,7 @@ ${JSON.stringify(questionConfig, null, 2)}
 
 Rules:
 - STRICTLY follow the question configuration (counts, marks, types)
+- For each question in a section, populate the marks field with the corresponding marks value for that question type from the Required Questions Configuration.
 - Do NOT include options if the question type is NOT multiple choice
 - Output JSON only. No markdown, no extra text.
 `;

@@ -130,7 +130,7 @@ function OutputContent() {
 
                     <div className="flex justify-between text-sm mb-6">
                         <span>Time Allowed: 45 minutes</span>
-                        <span>Maximum Marks: 20</span>
+                        <span>Maximum Marks: {sections.reduce((acc: number, section: any) => acc + (section.questions?.reduce((qAcc: number, q: any) => qAcc + (q.marks || 0), 0) || 0), 0)}</span>
                     </div>
 
                     <p className="text-sm mb-6">
@@ -159,23 +159,31 @@ function OutputContent() {
 
                             <div className="space-y-4 text-sm leading-relaxed">
                                 {section.questions.map((q: any, qIdx: number) => (
-                                    <div key={qIdx} className="flex gap-2">
-                                        <span>{qIdx + 1}.</span>
+                                    <div key={qIdx} className="flex gap-2 justify-between items-start">
+                                        <div className="flex gap-2 flex-1 min-w-0">
+                                            <span>{qIdx + 1}.</span>
 
-                                        <div>
-                                            <p>{q.questionText}</p>
+                                            <div>
+                                                <p>{q.questionText}</p>
 
-                                            {/* OPTIONS */}
-                                            {q.options && q.options.length > 0 && (
-                                                <div className="mt-2 space-y-1 ml-4">
-                                                    {q.options.map((opt: string, i: number) => (
-                                                        <div key={i}>
-                                                            ({String.fromCharCode(97 + i)}) {opt}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
+                                                {/* OPTIONS */}
+                                                {q.options && q.options.length > 0 && (
+                                                    <div className="mt-2 space-y-1 ml-4">
+                                                        {q.options.map((opt: string, i: number) => (
+                                                            <div key={i}>
+                                                                ({String.fromCharCode(97 + i)}) {opt}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
+                                        
+                                        {q.marks && (
+                                            <span className="font-semibold text-gray-800 text-sm whitespace-nowrap ml-4">
+                                                [{q.marks} Mark{q.marks > 1 ? "s" : ""}]
+                                            </span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
