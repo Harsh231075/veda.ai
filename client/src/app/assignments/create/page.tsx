@@ -107,12 +107,12 @@ function CreateForm() {
 
     // When regenerating, source material can come from original or new file
     if (!selectedFile && !regenerateId) {
-      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG).");
+      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG, PPT, PPTX).");
       return;
     }
 
     if (regenerateId && !selectedFile && !originalSourceMaterial) {
-      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG).");
+      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG, PPT, PPTX).");
       return;
     }
 
@@ -229,15 +229,15 @@ function CreateForm() {
             type="file"
             id="file-upload"
             className="hidden"
-            accept=".pdf,.doc,.docx,.png"
+            accept=".pdf,.doc,.docx,.png,.ppt,.pptx"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                const allowedExtensions = ["pdf", "doc", "docx", "png"];
+                const allowedExtensions = ["pdf", "doc", "docx", "png", "ppt", "pptx"];
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
                 
                 if (!allowedExtensions.includes(fileExtension || '')) {
-                  setValidationError("Only PDF, DOC, DOCX, and PNG files are allowed.");
+                  setValidationError("Only PDF, DOC, DOCX, PNG, PPT, and PPTX files are allowed.");
                   setSelectedFile(undefined);
                   e.target.value = ""; // Clear the input
                   return;
@@ -268,8 +268,8 @@ function CreateForm() {
             </p>
             <p className="text-xs text-gray-400 mt-1 mb-4">
               {regenerateId && originalSourceMaterial && !selectedFile
-                ? "Upload a new file to replace the previous source material (PDF, DOC, DOCX, PNG)"
-                : "Supported formats: PDF, DOC, DOCX, PNG"}
+                ? "Upload a new file to replace the previous source material (PDF, DOC, DOCX, PNG, PPT, PPTX)"
+                : "Supported formats: PDF, DOC, DOCX, PNG, PPT, PPTX"}
             </p>
             <span className="inline-block px-4 py-2 bg-white border border-gray-200 rounded-full text-sm shadow-sm hover:shadow-md transition-shadow">
               {selectedFile ? "Change File" : regenerateId && originalSourceMaterial ? "Replace File" : "Browse Files"}
