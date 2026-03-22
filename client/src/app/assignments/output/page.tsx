@@ -1,16 +1,38 @@
 "use client";
-import React, { Suspense } from "react";
+import { Suspense, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useSearchParams } from "next/navigation";
 import { useAssignmentOutput } from "@/hooks/useAssignmentOutput";
-import { RefreshCw, Download, ArrowLeft } from "lucide-react";
+import { RefreshCw, Download, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { downloadPaperAsPdf } from "@/services/downloadPdf";
+import { downloadPaperViaBackend } from "@/services/downloadPdf";
+import { playSuccessSound } from "@/services/playSound";
 
 function OutputContent() {
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
     const { assignment, loading, publishing, publish, toast, setToast } = useAssignmentOutput(id);
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const handleDownload = async () => {
+        setIsDownloading(true);
+        try {
+            await downloadPaperViaBackend(assignment, assignment.title || "Question_Paper");
+            setToast({ message: "PDF downloaded successfully", type: "success" });
+            playSuccessSound();
+            
+            setTimeout(() => {
+                setToast(null);
+            }, 3000);
+        } catch (error) {
+            setToast({ message: "Failed to download PDF", type: "error" });
+            setTimeout(() => {
+                setToast(null);
+            }, 3000);
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
     if (loading || !assignment || assignment.status === "PENDING" || assignment.status === "PROCESSING") {
         return (
@@ -98,18 +120,32 @@ function OutputContent() {
                     </button>
 
                     <button
-                        onClick={() => downloadPaperAsPdf("paper-content", assignment.title || "Question_Paper")}
-                        className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-95 transition flex items-center gap-1"
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                        className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full border transition active:scale-95 flex items-center gap-1.5 ${isDownloading
+                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                            }`}
                     >
-                        <Download size={15} /> <span className="hidden sm:inline">Download</span>
+                        {isDownloading ? (
+                            <>
+                                <Loader2 size={15} className="animate-spin" />
+                                <span className="hidden sm:inline">Downloading...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Download size={15} />
+                                <span className="hidden sm:inline">Download</span>
+                            </>
+                        )}
                     </button>
 
                     <button
                         onClick={publish}
                         disabled={publishing || assignment.isPublished}
                         className={`px-4 sm:px-5 py-2 text-xs sm:text-sm font-medium rounded-full border transition active:scale-95 flex items-center ${assignment.isPublished
-                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                                : "bg-black text-white border-black hover:bg-gray-800"
+                            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                            : "bg-black text-white border-black hover:bg-gray-800"
                             }`}
                     >
                         {assignment.isPublished ? "✓ Published" : publishing ? "Publishing..." : "Save & Publish"}
@@ -178,7 +214,7 @@ function OutputContent() {
                                                 )}
                                             </div>
                                         </div>
-                                        
+
                                         {q.marks && (
                                             <span className="font-semibold text-gray-800 text-sm whitespace-nowrap ml-4">
                                                 [{q.marks} Mark{q.marks > 1 ? "s" : ""}]

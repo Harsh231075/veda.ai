@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "./api.config";
+
 export const downloadPaperAsPdf = async (elementId: string, filename = "Question_Paper") => {
   if (typeof window === "undefined") return;
 
@@ -40,5 +42,38 @@ export const downloadPaperAsPdf = async (elementId: string, filename = "Question
     pdf.save(`${filename}.pdf`);
   } catch (err) {
     console.error("PDF Download error:", err);
+  }
+};
+
+export const downloadPaperViaBackend = async (assignment: any, filename = "Question_Paper") => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/pdf/download`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assignment),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate PDF');
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `${filename}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (err) {
+    console.error("Backend PDF error:", err);
+    alert("Could not generate PDF. Please try again.");
+    throw err;
   }
 };

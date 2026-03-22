@@ -150,6 +150,36 @@ export default function SettingsPage() {
                                 <input type="text" value="System Administrator" readOnly className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-500 cursor-not-allowed outline-none font-medium" />
                             </div>
                         </div>
+
+                        {/* Divider */}
+                        <div className="my-10 border-t" />
+
+                        {/* Coming Soon Section */}
+                        <div className="space-y-4">
+                            <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 text-indigo-500" />
+                                Coming Soon
+                            </h2>
+
+                            <div className="space-y-2 text-sm text-gray-600">
+                                <p>• Upload custom avatars and profile banners</p>
+                                <p>• Manage multiple organizational roles and permissions</p>
+                                <p>• Detailed personal usage statistics and history</p>
+                            </div>
+                        </div>
+
+                        {/* Mini Info */}
+                        <div className="mt-8 p-5 rounded-2xl bg-black text-white border-2 border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.07)] flex items-start gap-4">
+                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 mt-0.5">
+                                <Sparkles className="w-4 h-4 text-red-400" />
+                            </div>
+                            <div>
+                                <p style={{ color: '#ffffff' }} className="text-sm text-white leading-relaxed tracking-wide">
+                                    Profile management is part of our upcoming architecture overhaul.
+                                    In future updates, users will be able to fully manage and customize their personal account details, avatars, and role permissions.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -165,6 +195,36 @@ export default function SettingsPage() {
                             <ToggleItem label="Assignment completion alerts" description="Get notified once paper generation finishes layout sets." />
                             <ToggleItem label="Weekly digest summary" description="System usage and throughput overview reports layout." />
                             <ToggleItem label="Account security alerts" description="Login updates and secure parameters alerts verification layout." defaultChecked />
+                        </div>
+
+                        {/* Divider */}
+                        <div className="my-10 border-t" />
+
+                        {/* Coming Soon Section */}
+                        <div className="space-y-4">
+                            <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 text-indigo-500" />
+                                Coming Soon
+                            </h2>
+
+                            <div className="space-y-2 text-sm text-gray-600">
+                                <p>• Granular push and SMS notification routing</p>
+                                <p>• Webhook integrations for external analytics dashboards</p>
+                                <p>• Scheduled digest emails for weekly organizational reports</p>
+                            </div>
+                        </div>
+
+                        {/* Mini Info */}
+                        <div className="mt-8 p-5 rounded-2xl bg-black text-white border-2 border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.07)] flex items-start gap-4">
+                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 mt-0.5">
+                                <Sparkles className="w-4 h-4 text-red-400" />
+                            </div>
+                            <div>
+                                <p style={{ color: '#ffffff' }} className="text-sm text-white leading-relaxed tracking-wide">
+                                    Advanced notification routing is built into our scalable architecture.
+                                    In future updates, users will be able to configure granular email digests, alerts, and real-time webhook integrations.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -192,6 +252,36 @@ export default function SettingsPage() {
                                     <p className="text-xs text-gray-400">Download offline paper generation history datasets sync buffers.</p>
                                 </div>
                                 <button disabled className="px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-100 text-xs font-medium text-slate-400 cursor-not-allowed">Export</button>
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="my-10 border-t" />
+
+                        {/* Coming Soon Section */}
+                        <div className="space-y-4">
+                            <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 text-indigo-500" />
+                                Coming Soon
+                            </h2>
+
+                            <div className="space-y-2 text-sm text-gray-600">
+                                <p>• Complete workspace data exports and cloud backups</p>
+                                <p>• System-level cache tuning for massive data ingestion</p>
+                                <p>• Automated organizational data compliances and syncs</p>
+                            </div>
+                        </div>
+
+                        {/* Mini Info */}
+                        <div className="mt-8 p-5 rounded-2xl bg-black text-white border-2 border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.07)] flex items-start gap-4">
+                            <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20 mt-0.5">
+                                <Sparkles className="w-4 h-4 text-red-400" />
+                            </div>
+                            <div>
+                                <p style={{ color: '#ffffff' }} className="text-sm text-white leading-relaxed tracking-wide">
+                                    Advanced system controls represent our premium enterprise tier functionality.
+                                    In future updates, users will gain access to direct system-level configuration, cache tuning, and automated data exports.
+                                </p>
                             </div>
                         </div>
                     </div>

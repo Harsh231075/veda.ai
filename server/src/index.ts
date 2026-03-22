@@ -9,6 +9,7 @@ import { initSocket } from "./socket";
 import { initWorker } from "./services/queue";
 import assignmentRoutes from "./routes/assignmentRoutes";
 import userRoutes from "./routes/userRoutes";
+import pdfRoutes from "./routes/pdfRoutes";
 
 const app = express();
 const server = createServer(app);
@@ -29,6 +30,7 @@ initWorker();
 // Routes
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/pdf", pdfRoutes);
 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
