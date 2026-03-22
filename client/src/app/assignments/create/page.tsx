@@ -107,12 +107,12 @@ function CreateForm() {
 
     // When regenerating, source material can come from original or new file
     if (!selectedFile && !regenerateId) {
-      setValidationError("Please upload a document or image file.");
+      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG).");
       return;
     }
 
     if (regenerateId && !selectedFile && !originalSourceMaterial) {
-      setValidationError("Please upload a document or image file.");
+      setValidationError("Please upload a supported file (PDF, DOC, DOCX, PNG).");
       return;
     }
 
@@ -229,10 +229,25 @@ function CreateForm() {
             type="file"
             id="file-upload"
             className="hidden"
+            accept=".pdf,.doc,.docx,.png"
             onChange={(e) => {
-              setSelectedFile(e.target.files?.[0]);
-              if (e.target.files?.[0]) {
-                setUseOriginalSource(false);
+              const file = e.target.files?.[0];
+              if (file) {
+                const allowedExtensions = ["pdf", "doc", "docx", "png"];
+                const fileExtension = file.name.split('.').pop()?.toLowerCase();
+                
+                if (!allowedExtensions.includes(fileExtension || '')) {
+                  setValidationError("Only PDF, DOC, DOCX, and PNG files are allowed.");
+                  setSelectedFile(undefined);
+                  e.target.value = ""; // Clear the input
+                  return;
+                }
+                
+                setValidationError("");
+                setSelectedFile(file);
+                if (e.target.files?.[0]) {
+                  setUseOriginalSource(false);
+                }
               }
             }}
           />
@@ -253,8 +268,8 @@ function CreateForm() {
             </p>
             <p className="text-xs text-gray-400 mt-1 mb-4">
               {regenerateId && originalSourceMaterial && !selectedFile
-                ? "Upload a new file to replace the previous source material"
-                : "Upload images of your preferred document/image"}
+                ? "Upload a new file to replace the previous source material (PDF, DOC, DOCX, PNG)"
+                : "Supported formats: PDF, DOC, DOCX, PNG"}
             </p>
             <span className="inline-block px-4 py-2 bg-white border border-gray-200 rounded-full text-sm shadow-sm hover:shadow-md transition-shadow">
               {selectedFile ? "Change File" : regenerateId && originalSourceMaterial ? "Replace File" : "Browse Files"}
