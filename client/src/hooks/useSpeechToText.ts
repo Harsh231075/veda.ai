@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 interface SpeechToTextResult {
   isListening: boolean;
   transcript: string;
+  interimTranscript: string;
   startListening: () => void;
   stopListening: () => void;
   toggleListening: () => void;
@@ -15,6 +16,7 @@ export const useSpeechToText = (
 ): SpeechToTextResult => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
 
   const isSupported =
@@ -37,25 +39,33 @@ export const useSpeechToText = (
 
     recognition.onresult = (event: any) => {
       let finalText = "";
+      let tempInterim = "";
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
           finalText += transcript + " ";
+        } else {
+          tempInterim += transcript;
         }
       }
 
+      setInterimTranscript(tempInterim);
+
       if (finalText.trim() && onResult) {
         onResult(finalText.trim());
+        setInterimTranscript(""); // Clear once merged
       }
     };
 
     recognition.onerror = () => {
       setIsListening(false);
+      setInterimTranscript("");
     };
 
     recognition.onend = () => {
       setIsListening(false);
+      setInterimTranscript("");
     };
 
     recognitionRef.current = recognition;
@@ -64,9 +74,15 @@ export const useSpeechToText = (
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+      try {
+        recognitionRef.current.stop();
+        recognitionRef.current.abort(); // Force immediately
+      } catch (err) {
+        console.error("Error stopping recognizer:", err);
+      }
     }
+    setIsListening(false);
+    setInterimTranscript("");
   }, []);
 
   const toggleListening = useCallback(() => {
@@ -80,6 +96,7 @@ export const useSpeechToText = (
   return {
     isListening,
     transcript,
+    interimTranscript,
     startListening,
     stopListening,
     toggleListening,

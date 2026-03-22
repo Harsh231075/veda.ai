@@ -100,7 +100,7 @@ function CreateForm() {
     });
   }, []);
 
-  const { isListening, toggleListening, isSupported } = useSpeechToText(handleSpeechResult);
+  const { isListening, toggleListening, isSupported, interimTranscript } = useSpeechToText(handleSpeechResult);
 
   const handleNext = () => {
     setValidationError("");
@@ -401,40 +401,84 @@ function CreateForm() {
               Additional Information (For better output)
             </label>
 
-            <textarea
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-gray-50/50 hover:bg-gray-50 focus:bg-white p-4 pr-14 text-sm font-medium outline-none focus:border-black transition-all resize-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
-              rows={4}
-              placeholder="e.g Generate a question paper for 3 hour exam duration..."
-            />
+            <div className="relative">
+              <textarea
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                className="w-full rounded-2xl border border-gray-200 bg-gray-50/50 hover:bg-gray-50 focus:bg-white p-4 pr-14 text-sm font-medium outline-none focus:border-black transition-all resize-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                rows={4}
+                placeholder="e.g Generate a question paper for 3 hour exam duration..."
+              />
 
-            {isSupported && (
-              <div className="absolute bottom-4 right-4 flex items-center justify-center">
-                {isListening && (
-                  <span className="absolute w-10 h-10 bg-red-400 rounded-full animate-ping opacity-75"></span>
-                )}
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className={`w-9 h-9 flex items-center justify-center rounded-full shadow-md border border-gray-100 transition-all z-10 ${
-                    isListening
-                      ? "bg-red-500 text-white"
-                      : "bg-black text-white hover:bg-gray-800 hover:scale-110 active:scale-95"
-                  }`}
-                  title={isListening ? "Stop listening" : "Start voice input"}
-                >
-                  {isListening ? <MicOff size={16} /> : <Mic size = {16} />}
-                </button>
-              </div>
-            )}
+              {/* Listening Overlay */}
+              {isListening && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center gap-3 z-30 transition-all duration-300 border border-gray-100/60 shadow-lg">
+                  <style>{`
+                    @keyframes waveform {
+                      0%, 100% { transform: scaleY(0.4); }
+                      50% { transform: scaleY(1.3); }
+                    }
+                    .animate-waveform {
+                      animation: waveform 0.6s ease-in-out infinite;
+                      transform-origin: center;
+                    }
+                  `}</style>
+                  
+                  <div className="flex items-center gap-1.5 h-10">
+                    <span className="w-1.5 h-6 bg-black rounded-full animate-waveform [animation-delay:0ms]"></span>
+                    <span className="w-1.5 h-10 bg-gray-600 rounded-full animate-waveform [animation-delay:150ms]"></span>
+                    <span className="w-1.5 h-14 bg-black rounded-full animate-waveform [animation-delay:300ms]"></span>
+                    <span className="w-1.5 h-10 bg-gray-600 rounded-full animate-waveform [animation-delay:450ms]"></span>
+                    <span className="w-1.5 h-6 bg-black rounded-full animate-waveform [animation-delay:600ms]"></span>
+                  </div>
 
-            {isListening && (
-              <p className="text-xs text-red-500 mt-1 flex items-center gap-1 justify-end">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-                Listening... Speak now
-              </p>
-            )}
+                  <p className="text-gray-900 font-bold text-sm     flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    Listening... Speak now
+                  </p>
+
+                  <div className="max-w-[85%] text-center mt-0.5 min-h-[1.5rem] flex items-center justify-center">
+                    {interimTranscript ? (
+                      <p className="text-gray-800 text-[13px] italic font-semibold leading-relaxed">
+                        "{interimTranscript}"
+                      </p>
+                    ) : (
+                      <p className="text-gray-400 text-xs">Waiting for voice input...</p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleListening();
+                    }}
+                    className="mt-2 px-6 py-2 bg-black text-white text-xs font-bold rounded-full shadow-md hover:bg-gray-800 transition-all active:scale-95 pointer-events-auto"
+                  >
+                    Stop Recording
+                  </button>
+                </div>
+              )}
+
+              {isSupported && (
+                <div className="absolute bottom-4 right-4 flex items-center justify-center z-40">
+                  {isListening && (
+                    <span className="absolute w-10 h-10 bg-red-400 rounded-full animate-ping opacity-75"></span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    className={`w-9 h-9 flex items-center justify-center rounded-full shadow-md border border-gray-100 transition-all ${
+                      isListening
+                        ? "bg-red-500 text-white"
+                        : "bg-black text-white hover:bg-gray-800 hover:scale-110 active:scale-95"
+                    }`}
+                    title={isListening ? "Stop listening" : "Start voice input"}
+                  >
+                    {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {(error || validationError) && <p className="text-red-500 text-sm mt-3">{error || validationError}</p>}
